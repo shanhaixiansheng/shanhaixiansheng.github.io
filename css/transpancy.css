@@ -1,0 +1,20 @@
+<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script>/* ����ҳ���� */
+.layout_post > #post {
+    /* ���´���͸����Ϊ0.7 ���������޸�*/
+    background: rgba(255,255,255,.9);
+}
+
+/* ����ҳ�汳�� */
+#aside_content .card-widget, #recent-posts > .recent-post-item, .layout_page > div:first-child:not(.recent-posts), .layout_post > #page, .layout_post > #post, .read-mode .layout_post > #post {
+    /* ���´���͸����Ϊ0.7 */
+    background: rgba(255,255,255,.7);
+}
+/*��߿�Ƭ��͸���� */
+:root {
+    --card-bg: rgba(255, 255, 255, .7);
+}
+/* ҳ��͸�� */
+#footer {
+    /* ���´���͸����Ϊ0.7 */
+    background: rgba(255,255,255, .0);
+}
