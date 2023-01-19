@@ -1,0 +1,9 @@
+@font-face{
+    font-family: 'ziti';
+    font-display: swap;
+    src: url('../font/ziti.ttf');
+}
+
+body {
+    font-family: 'ziti.ttf';
+}
