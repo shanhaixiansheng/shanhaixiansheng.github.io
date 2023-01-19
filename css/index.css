@@ -1577,7 +1577,7 @@ blockquote > :last-child {
 #article-container pre,
 #article-container code {
   font-size: var(--global-font-size);
-  font-family: ziti, !important;
+  font-family: ziti, consolas, Menlo, "PingFang SC", "Microsoft JhengHei", "Microsoft YaHei", sans-serif !important;
 }
 #article-container code {
   padding: 2px 4px;
