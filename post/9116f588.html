@@ -1,0 +1,455 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>三菱PLC指令详细解析 | mountainsea</title><meta name="author" content="mountainsea"><meta name="copyright" content="mountainsea"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、顺控指令1 触点指令00 LD   逻辑操作开始01 LDI   逻辑非操作开始02 AND  逻辑乘03 ANI   逻辑乘非04 OR   逻辑加05 ORI   逻辑加非   2 连接指令06 ANB  AND逻辑块与07 ORB  OR逻辑块或08 MPS   存储操作结果09 MRD  从MPS读取操作结果10 MPP   从MPS读取操作结果并清除结果   3 输出指令11 OUT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三菱PLC指令详细解析">
+<meta property="og:url" content="https://shanhaixiansheng.github.io/post/9116f588.html">
+<meta property="og:site_name" content="mountainsea">
+<meta property="og:description" content="一、顺控指令1 触点指令00 LD   逻辑操作开始01 LDI   逻辑非操作开始02 AND  逻辑乘03 ANI   逻辑乘非04 OR   逻辑加05 ORI   逻辑加非   2 连接指令06 ANB  AND逻辑块与07 ORB  OR逻辑块或08 MPS   存储操作结果09 MRD  从MPS读取操作结果10 MPP   从MPS读取操作结果并清除结果   3 输出指令11 OUT">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2023/01/14/pSM6IZ4.jpg">
+<meta property="article:published_time" content="2023-02-26T06:02:00.000Z">
+<meta property="article:modified_time" content="2023-02-26T06:03:16.628Z">
+<meta property="article:author" content="mountainsea">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2023/01/14/pSM6IZ4.jpg"><link rel="shortcut icon" href="/img/touxiang.png"><link rel="canonical" href="https://shanhaixiansheng.github.io/post/9116f588"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: {"limitDay":30,"position":"top","messagePrev":"距离上次更新已经","messageNext":"天了，文章的内容可能已经过时"},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: mountainsea","link":"链接: ","source":"来源: mountainsea","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '三菱PLC指令详细解析',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-02-26 14:03:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'">
+- <link rel="stylesheet" href="/self/Kimbiedark.css"> - <link rel="stylesheet" href="https://npm.elemecdn.com/ethan4116-blog/lib/css/plane_v2.css"> - <link rel="stylesheet" href="/css/transpancy.css"> - <link rel="stylesheet" href="/css/font.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-clock/lib/clock.min.css" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-double-row-display@1.00/cardlistpost.min.css"/>
+<style>#recent-posts > .recent-post-item >.recent-post-info > .article-meta-wrap > .tags:before {content:"\A";
+  white-space: pre;}#recent-posts > .recent-post-item >.recent-post-info > .article-meta-wrap > .tags > .article-meta__separator{display:none}</style>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/touxiang.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 网站推荐</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s1.ax1x.com/2023/01/14/pSMWHvq.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">mountainsea</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 网站推荐</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">三菱PLC指令详细解析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-02-26T06:02:00.000Z" title="发表于 2023-02-26 14:02:00">2023-02-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-02-26T06:03:16.628Z" title="更新于 2023-02-26 14:03:16">2023-02-26</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="三菱PLC指令详细解析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><div id="drone"><div class="container"><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="trigger"></div><div class="monitor"><div class="opening"><div class="camera o-x"><div class="camera o-y"><div class="camera o-z"><div class="awing"><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="fly o-x"><div class="fly o-y"><div class="fly o-z"><div class="free_bounce"><div class="free_rotate"><div class="body"><div class="cockpit"><div class="under"></div><div class="back"></div><div class="left"></div><div class="right"></div><div class="edge_left"></div><div class="edge_right"></div><div class="boosts"><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div><div class="boost"></div></div></div><div class="wing_left"><div class="under"></div><div class="back"></div><div class="left"></div><div class="right"></div></div><div class="wing_right"><div class="under"></div><div class="back"></div><div class="left"></div><div class="right"> </div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="一、顺控指令"><a href="#一、顺控指令" class="headerlink" title="一、顺控指令"></a>一、顺控指令</h1><h2 id="1-触点指令"><a href="#1-触点指令" class="headerlink" title="1 触点指令"></a>1 触点指令</h2><p>00 LD   逻辑操作开始<br>01 LDI   逻辑非操作开始<br>02 AND  逻辑乘<br>03 ANI   逻辑乘非<br>04 OR   逻辑加<br>05 ORI   逻辑加非  </p>
+<h2 id="2-连接指令"><a href="#2-连接指令" class="headerlink" title="2 连接指令"></a>2 连接指令</h2><p>06 ANB  AND逻辑块与<br>07 ORB  OR逻辑块或<br>08 MPS   存储操作结果<br>09 MRD  从MPS读取操作结果<br>10 MPP   从MPS读取操作结果<br>并清除结果  </p>
+<h2 id="3-输出指令"><a href="#3-输出指令" class="headerlink" title="3 输出指令"></a>3 输出指令</h2><p>11 OUT  软元件输出<br>12 SET   软元件置位<br>13 RST   软元件复位<br>14 PLS   在输入信号的上升沿<br>15 PLF   在输入信号的下降沿<br>16 CHK  软元件输出翻转  </p>
+<h2 id="4-移位指令"><a href="#4-移位指令" class="headerlink" title="4 移位指令"></a>4 移位指令</h2><p>17 SFT   元件移1位<br>18 SFTP  元件移1位<br>5 主控指令<br>19 MC   主控开始<br>20 MCR  主控复位<br>6 结束指令<br>21 FEND  结束主程序<br>22 END  总的程序末尾，<br>返回第0步  </p>
+<h2 id="7-其它指令"><a href="#7-其它指令" class="headerlink" title="7 其它指令"></a>7 其它指令</h2><p>23 STOP  停止<br>24 NOP   空操作  </p>
+<h1 id="二-基本指令"><a href="#二-基本指令" class="headerlink" title="二 基本指令"></a>二 基本指令</h1><h2 id="1-比较指令"><a href="#1-比较指令" class="headerlink" title="1 比较指令"></a>1 比较指令</h2><p>16位数据比较<br>25 LD&#x3D;   当S1&#x3D;S2, 接通，<br>当S1≠S2, 断开<br>26 AND&#x3D;<br>27 OR&#x3D;<br>28 LD&lt;&gt;  当S1≠S2, 接通，<br>当S1&#x3D;S2, 断开<br>29 AND&lt;&gt;<br>30 OR&lt;&gt;<br>31 LD&gt;   当S1&gt;S2, 接通，<br>当S1≤S2, 断开<br>32 AND&gt;<br>33 OR&gt;<br>34 LD&lt;&#x3D;  当S1≤S2, 接通，<br>当S1&gt;S2, 断开<br>35 AND&lt;&#x3D;<br>36 OR&lt;&#x3D;<br>37 LD&lt;   当S1&lt;S2, 接通，<br>当S1≥S2, 断开<br>38 AND&lt;<br>39 OR&lt;<br>40 LD&gt;&#x3D;  当S1≥S2, 接通，<br>当S1&lt;S2, 断开<br>41 AND&gt;&#x3D;<br>42 OR&gt;&#x3D;<br>32位数据比较<br>43 LDD&#x3D; 当(S1+1,S1)&#x3D;(S2+1,S2), 接通<br>44 ANDD&#x3D;<br>45 ORD&#x3D;<br>46 LDD&lt;&gt; 当(S1+1,S1)≠(S2+1,S2),接通<br>47 ANDD&lt;&gt;<br>48 ORD&lt;&gt;<br>49 LDD&gt; 当(S1+1,S1)&gt;(S2+1,S2), 接通<br>50 ANDD&gt;<br>51 ORD&gt;<br>52 LDD&lt;&#x3D; 当(S1+1,S1)≤(S2+1,S2),接通<br>53 ANDD&lt;&#x3D;<br>54 ORD&lt;&#x3D;<br>55 LDD&lt; 当(S1+1,S1)&lt;(S2+1,S2), 接通<br>56 ANDD&lt;<br>57 ORD&lt;<br>58 LDD&gt;&#x3D; 当(S1+1,S1)≥(S2+1,S2),接通<br>59 ANDD&gt;&#x3D;<br>60 ORD&gt;&#x3D;    </p>
+<h2 id="2-算术运算指令"><a href="#2-算术运算指令" class="headerlink" title="2 算术运算指令"></a>2 算术运算指令</h2><p>二进制16位加&#x2F;减<br>61 +   (D)+(S)→(D)<br>62 +P<br>63 +   (S1)+(S2)→(D)<br>64 +P<br>65 -   (D)-(S)→(D)<br>66 -P<br>67 -   (S1)-(S2)→(D)<br>68 -P<br>二进制32位加&#x2F;减<br>69 D+  (D+1,D)+(S+1,S)→(D+1,D)<br>70 D+P<br>71 D+  (S1+1,S1)+(S2+1,S2)→(D+1,D)<br>72 D+P<br>73 D-  (D+1,D)-(S+1,S)→(D+1,D)<br>74 D-P<br>75 D-  (S1+1,S1)-(S2+1,S2)→(D+1,D)<br>76 D-P<br>77 *  (S1)×(S2)→(D+1,D)<br>78 <em>P<br>79 &#x2F;  (S1)&#x2F;(S2)→商(D), 余数(D+1)<br>80 &#x2F;P<br>81 D</em>  (S1+1,S1)×(S2+1,S2)→<br>(D+3,D+2,D+1,D)<br>82 D<em>P<br>83 D&#x2F;  (S1+1,S1)&#x2F;(S2+1,S2)→<br>   商(D+1,D),余数(D+3,D+2)<br>84 D&#x2F;P<br>85 B+  (D)+(S)→(D)<br>86 B+P<br>87 B+  (S1)+(S2)→(D)<br>88 B+P<br>89 B-  (D)-(S)→(D)<br>90 B-P<br>91 B-  (S1)-(S2)→(D)<br>92 B-P<br>93 DB+  (D+1,D)+(S+1,S) →(D+1,D)<br>94 DB+P<br>95 DB+  (S1+1,S1)+(S2+1,S2)→(D+1,D)<br>96 DB+P<br>97 DB-  (D+1,D)-(S+1,S)→(D+1,D)<br>98 DB-P<br>99 DB-  (S1+1,S1)-(S2+1,S2)→(D+1,D)<br>100 DB-P<br>101 B</em>  (S1)×(S2)→(D+1,D)<br>102 B<em>P<br>103 B&#x2F;  (S1)&#x2F;(S2)→商(D),余数(D+1)<br>104 B&#x2F;P<br>105 DB</em>  (S1+1,S1)×(S2+1,S2)→<br>(D+3,D+2,D+1,D)<br>106 DB*P<br>107 DB&#x2F;  (S1+1,S1)&#x2F;(S2+1,S2)→<br>   商(D+1,D),余数(D+3,D+2)<br>108 DB&#x2F;P<br>109 INC  (D)+1→(D)<br>110 INCP<br>111 DINC (D+1,D)+1→(D+1,D)<br>112 DINCP<br>113 DEC  (D)-1→(D)<br>114 DECP<br>115 DDEC (D+1,D)-1→(D+1,D)<br>116 DDECP   </p>
+<h2 id="3-BCD—二进制转换"><a href="#3-BCD—二进制转换" class="headerlink" title="3 BCD—二进制转换"></a>3 BCD—二进制转换</h2><p>117 BCD  (S)→(D)BCD转换<br>118 BCDP<br>119 DBCD  (S+1,S)→(D+1,D)<br>120 DBCDP<br>121 BIN   (S)→(D)二进制转换<br>122 BINP<br>123 DBIN  (S+1,S)→(D+1,D)<br>124 DBINP    </p>
+<h2 id="4-数据传送指令"><a href="#4-数据传送指令" class="headerlink" title="4 数据传送指令"></a>4 数据传送指令</h2><p>125 MOV  (S)→(D)<br>126 MOVP<br>127 DMOV  (S+1,S)→(D+1,D)<br>128 DMOVP<br>129 CML  (S)→(D)<br>130 CMLP<br>131 DCML  (S+1,S)→(D+1,D)<br>132 DCML<br>133 DCMLP<br>134 BMOV  (S)→(D)n个<br>135 BMOVP<br>136 FMOV  (S)→(D)n个<br>137 FMOVP<br>138 XCH  (D1)←→(D2)<br>139 XCHP<br>140 DXCH  (D1+1,D1)←→(D2+1,D2)<br>141 DXCHP    </p>
+<h2 id="5-程序分支指令"><a href="#5-程序分支指令" class="headerlink" title="5 程序分支指令"></a>5 程序分支指令</h2><p>142 CJ   条件满足，跳转到P<strong>处<br>143 SCJ   条件满足后紧接的扫描周期,<br>跳转到P</strong>处<br>144 JMP   无条件跳转到P<strong>处<br>145 CALL  执行P</strong>处子程序<br>146 CALLP<br>147 RET   从子程序返回<br>148 EI   允许中断<br>149 DI   禁止中断<br>150 IRET  从中断程序返回<br>151 SUB   执行n指定的程序<br>152 SUBP    </p>
+<h2 id="6-程序切换指令"><a href="#6-程序切换指令" class="headerlink" title="6 程序切换指令"></a>6 程序切换指令</h2><p>153 CHG  在主副程序间切换<br>7 刷新指令<br>154 COM  执行通讯刷新<br>155 EI   允许通讯刷新<br>156 DI   禁止通讯刷新<br>157 SEG   对应软元件的刷新，仅执行1个扫描周期，M9052 ON时有效  </p>
+<h1 id="三-应用指令"><a href="#三-应用指令" class="headerlink" title="三 应用指令"></a>三 应用指令</h1><h2 id="1-逻辑运算指令"><a href="#1-逻辑运算指令" class="headerlink" title="1 逻辑运算指令"></a>1 逻辑运算指令</h2><p>158 WAND  (D) AND (S)→(D)<br>159 WANDP<br>160 WAND  (S1) AND (S2)→(D)<br>161 WANDP<br>162 DAND (D+1,D) AND (S+1,S)→(D+1,D)<br>163 DANDP<br>164 WOR  (D) OR (S)→(D)<br>165 WORP<br>166 WOR  (S1) OR (S2)→(D)<br>167 WORP<br>168 DOR (D+1,D) OR (S+1,S)→(D+1,D)<br>169 DORP<br>170 WXOR  (D) XOR (S)→(D)异或<br>171 WXORP<br>172 WXOR  (S1) XOR (S2)→(D)<br>173 WXORP<br>174 DXOR (D+1,D) XOR (S+1,S)→(D+1,D)<br>175 DXORP<br>176 WXNR  (D) XOR (S)→(D)<br>177 WXNRP<br>178 WXNR  (S1) XOR (S2)→(D)<br>179 WXNRP<br>180 DXNR (D+1,D) XOR (S+1,S)→(D+1,D)<br>181 DXNRP<br>182 NEG  0-(D)→(D)补码<br>183 NEGP    </p>
+<h2 id="2-旋转指令"><a href="#2-旋转指令" class="headerlink" title="2 旋转指令"></a>2 旋转指令</h2><p>184 ROR  n位右转<br>185 RORP<br>186 RCR   n位右转(带进位)<br>187 RCRP<br>188 ROL   n位左转<br>189 ROLP<br>190 RCL   n位左转(带进位)<br>191 RCLP<br>192 DROR  n位右转<br>193 DRORP<br>194 DRCR  n位右转(带进位)<br>195 DRCRP<br>196 DROL  n位左转<br>197 DROLP<br>198 DRCL  n位左转(带进位)<br>199 DRCLP    </p>
+<h2 id="3-移位指令"><a href="#3-移位指令" class="headerlink" title="3 移位指令"></a>3 移位指令</h2><p>200 SFR   n位右移<br>201 SFRP<br>202 SFL   n位左移<br>203 SFLP<br>204 BSFR  1位右移<br>205 BSFRP<br>206 BSFL  1位左移<br>207 BSFLP<br>208 DSFR  1位右移<br>209 DSFRP<br>210 DSFL  1位左移<br>211 DSFLP    </p>
+<h2 id="4-数据处理指令"><a href="#4-数据处理指令" class="headerlink" title="4 数据处理指令"></a>4 数据处理指令</h2><p>212 SER   数据搜索<br>213 SERP<br>214 SUM  位检查<br>215 SUMP<br>216 DSUM<br>217 DSUMP<br>218 DECO  译码编码<br>219 DECOP<br>220 ENCO<br>221 ENCOP<br>222 SEG   7段编码<br>223 BSET  对字中n位置位<br>224 BSETP<br>225 BRST  对字中n位复位<br>226 BRSTP<br>227 DIS   组合分离<br>228 DISP<br>229 UNI<br>230 UNIP<br>231 ASC   ASCII转化  </p>
+<h2 id="5-先进先出指令"><a href="#5-先进先出指令" class="headerlink" title="5 先进先出指令"></a>5 先进先出指令</h2><p>232 FIFW  FIFO写<br>233 FIFWP<br>234 FIFR  FIFO读<br>235 FIFRP    </p>
+<h2 id="6-内存缓冲区存取指令"><a href="#6-内存缓冲区存取指令" class="headerlink" title="6 内存缓冲区存取指令"></a>6 内存缓冲区存取指令</h2><p>236 FROM  从特殊功能模块读取数据<br>237 FROMP<br>238 DFRO<br>239 DFROP<br>240 TO   向特殊功能模块写数据<br>241 TOP<br>242 DTO<br>243 FROM  从远程I&#x2F;O站读数据<br>244 FROMP<br>245 DFRO<br>246 DFROP<br>247 TO   向远程站写数据<br>248 TOP<br>249 DTO<br>250 DTOP    </p>
+<h2 id="7-FOR-x2F-NEXT指令"><a href="#7-FOR-x2F-NEXT指令" class="headerlink" title="7 FOR&#x2F;NEXT指令"></a>7 FOR&#x2F;NEXT指令</h2><p>251 FOR   重复n次<br>252 NEXT    </p>
+<h2 id="8-本地站、远程I-x2F-O站存取指令"><a href="#8-本地站、远程I-x2F-O站存取指令" class="headerlink" title="8 本地站、远程I&#x2F;O站存取指令"></a>8 本地站、远程I&#x2F;O站存取指令</h2><p>253 LRDP  从本地站读数据<br>254 LWTP  向本地站写数据<br>255 RFRP  从远程特殊功能模块读数据<br>256 RTOP  向远程特殊功能模块写数据  </p>
+<h2 id="9-显示指令"><a href="#9-显示指令" class="headerlink" title="9 显示指令"></a>9 显示指令</h2><p>257 PR   从指定的8点字软元件输出<br>16个字符的ASCII码<br>258 PR   顺序向输出模块输出ASCII<br>    码, 直到结束符NUL(00H)<br>259 PRC   将字软元件的注释转换成<br>    ASCII码，并输出<br>260 LED   将指定的8点字软元件显示<br>16个字符的ASCII码<br>261 LEDA  显示指定的英文数字字符<br>262 LEDB<br>263 LEDC  显示软元件S的注释<br>264 LEDR  显示复位  </p>
+<h2 id="10-其它指令"><a href="#10-其它指令" class="headerlink" title="10 其它指令"></a>10 其它指令</h2><p>265 WDT  WDT复位<br>266 WDTP<br>267 CHK  故障检测<br>268 SLT  按参数设定的条件,数据被锁定<br>269 SLTR  状态锁存复位，且执行SLT<br>270 STRA 按参数设定的条件,采样数据存入<br>271 STRAR  采样跟踪复位，且允许执行<br>272 STC   进位标志(M9012)ON<br>273 CLC   进位标志(M9012)OFF<br>274 DUTY  用户定义时钟  </p>
+<h2 id="11-伺服指令"><a href="#11-伺服指令" class="headerlink" title="11 伺服指令"></a>11 伺服指令</h2><p>275 DSFRP  请求启动伺服程序<br>276 PSFLP  数据修改特殊继电器和特殊寄存器  </p>
+<h1 id="一特殊继电器M清单"><a href="#一特殊继电器M清单" class="headerlink" title="一特殊继电器M清单"></a>一特殊继电器M清单</h1><p>M9000  熔丝断<br>M9002  I&#x2F;O组件校验出错<br>M9004  MINI网通讯出错<br>M9005  AC电源掉电检测<br>M9006  电池电压低<br>M9007  电池电压低锁存<br>M9008  自诊断出错<br>M9009  信号报警器检测<br>M9010  运算出错标志<br>M9011  运算出错标志锁存<br>M9012  进位标志<br>M9016  数据存储区清零标志<br>M9017  数据存储区清零标志<br>M9018  数据通讯监控切换<br>M9020  0号用户定时时钟<br>M9021  1号用户定时时钟<br>M9022  2号用户定时时钟<br>M9023  3号用户定时时钟<br>M9024  4号用户定时时钟<br>M9025  时钟数据设置请求<br>M9026  时钟数据出错<br>M9027  时钟数据显示<br>M9028  时钟数据读请求<br>M9030  0.1秒时钟<br>M9031  0.2秒时钟<br>M9032  1秒时钟<br>M9033  2秒时钟<br>M9034  1分钟时钟<br>M9036  常开<br>M9037  常闭<br>M9038  RUN后第一个扫描周期ON<br>M9039  运行标志<br>M9040  暂停PAUSE允许线圈<br>M9041  PAUSE状态触点<br>M9042  停止状态触点<br>M9043  采样跟踪完成<br>M9044  采样跟踪<br>M9046  采样跟踪<br>M9047  采样跟踪准备<br>M9048  RUN LED闪烁标志<br>M9049  切换输出字符数目<br>M9050  存放操作结果的存储区交换触点<br>M9051  CHG指令执行禁止<br>M9052  SEG指令切换<br>M9053  EI&#x2F;DI指令切换<br>M9054  单步运行标志<br>M9055  状态锁存完成标志<br>M9056  主程序P, I设置请求<br>M9057  副程序P, I设置程序<br>M9060  副程序2P, I设置程序<br>M9061  副程序3P, I设置程序<br>M9060  远程终端出错<br>M9061  通讯出错<br>M9065  分离传送状态<br>M9066  传送处理切换<br>M9067  I&#x2F;O组件出错检测<br>M9068  测试模式<br>M9069  线路故障时的输出<br>M9073  WDT出错标志<br>M9074  PCPU准备完成标志<br>M9075  测试模式标志<br>M9076  外部急停输入标志<br>M9077  手动脉冲发生器轴设置错误标志<br>M9078  测试模式请求出错标志<br>M9079  伺复程序设置出错标志<br>M9081  对远程模块的通讯请求<br>M9082  最终站数不一致<br>M9084  出错检测<br>M9086  运行标志BASIC程序<br>M9087  暂停(PAUSE)标志<br>M9091  操作运行出错细节标志<br>M9091  微机子程序调用出错标志<br>M9092  双电源模块过热<br>M9093  双工电源模块出错<br>M9094  I&#x2F;O改变标志<br>M9095  双工运行校验出错<br>M9096  A3VCPU A自校出错<br>M9097  A3VCPU B自校出错<br>M9098  A3VCPU C自校出错<br>M9099  A3VTU自校出错<br>M9100  SFC程序登记<br>M9101  SFC程序起&#x2F;停<br>M9102  SFC启动状态<br>M9103  连续步转移有效&#x2F;失效<br>M9104  连续转移防止标志<br>M9108  步转移监控定时器起始<br>            (对应D9108)<br>M9109  步转移监控定时器起始<br>            (对应D9109)<br>M9110  步转移监控定时器起始<br>            (对应D9110)<br>M9111  步转移监控定时器起始<br>            (对应D9111)<br>M9112  步转移监控定时器起始<br>            (对应D9112)<br>M9113  步转移监控定时器起始<br>            (对应D9113)<br>M9114  步转移监控定时器起始<br>            (对应D9114)<br>M9180  激活步采样跟踪完成标志<br>M9181  激活步采样跟踪执行标志<br>M9182  激活步采样跟踪有效<br>M9196  在块停止时控制输出<br>M9197~9198 保险丝熔断，<br>            I&#x2F;O校核出错显示切换  </p>
+<h1 id="二-特殊寄存器"><a href="#二-特殊寄存器" class="headerlink" title="二 特殊寄存器"></a>二 特殊寄存器</h1><p>D9000  保险丝断<br>D9001  保险丝断<br>D9002  I&#x2F;O组件校验出错<br>D9003  SUM指令检测位数<br>D9004  MINI网主通讯组件出错<br>D9005  AC掉电计数<br>D9006  电池不足<br>D9008  自诊断出错<br>D9009  信号报警器检测<br>D9010  出错步<br>D9011  出错步<br>D9014  I&#x2F;O控制模式<br>D9015  CPU运行状态<br>D9016  ROM&#x2F;RAM设置<br>D9017  最小扫描时间<br>D9018  当前扫描时间<br>D9019  最大扫描时间<br>D9020  恒定扫描<br>D9021  扫描时间<br>D9022  1秒计数器<br>D9025  时钟数据(年，月)<br>D9026  时钟数据(日，时)<br>D9027  时钟数据(分，秒)<br>D9028  时钟数据(星期)<br>D9021<del>D9034 远程终端组件参数设置<br>D9035  远程I&#x2F;O组件的通讯属性<br>D9035  扩展文件寄存器<br>D9036  总的站数<br>D9036</del>9037 供指定扩展文件寄存器软件地址<br>D9038<del>9039 LED显示优先级<br>D9044  采样跟踪<br>D9050  SFC程序出错代码<br>D9051  出错块<br>D9052  出错步<br>D9053  转移出错<br>D9054  出错顺控步<br>D9055  状态锁存步序号<br>D9061  通讯出错代码<br>D9072  PC通讯检测<br>D9081  对远程终端模块的<br>            已执行的通讯请求数<br>D9082  最后的站号<br>D9090 微机子程序输入数据区首软元件号<br>D9091  指令出错<br>D9094  待更换的I&#x2F;O组件的首地址<br>D9095  A3VTS系统和A3V<br>            CPU的运行状态<br>D9096  A3VCPU A自检出错<br>D9097  A3VCPU B自检出错<br>D9098  A3VCPU C自检出错<br>D9099  A3VTU 自检测出错<br>D9100</del>D9107 断保险丝的组件<br>D9100  保险丝熔断的组件<br>D9108<del>D9114 步转移监控定时器设置<br>D9116</del>D9123 I&#x2F;O组件校验出错<br>D9124  信号器报警数量检测<br>D9125<del>D9132 信号报警器地址号<br>D9133</del>D9140 远程终端卡信息<br>D9141<del>D9172 通讯重发次数<br>D9173  模式设置<br>D9174  设置重发次数<br>D9175  线缆出错模块出错代码<br>D9180</del>9193远程终端模块出错代码<br>D9180  轴1和轴2的限位开关<br>           输出状态存储区<br>D9181  轴3和轴4的限位开关<br>           输出状态存储区<br>D9182  轴5和轴6的限位开关<br>           输出状态存储区<br>D9183  轴7和轴8的限位开关<br>           输出状态存储区<br>D9184  CPU出错的原因<br>D9185  伺服放大器接线数据<br>D9187  手动脉冲发生器轴设置出错<br>D9188 在TEST模式下启动轴号请求出错<br>D9189  出错程序号<br>D9190  数据设置出错<br>D9191  伺服放大器类型<br>D9196<del>9199 故障站检测<br>D9200  LRDP处理结果<br>D9201  LWTP处理结果<br>D9204  通讯状态<br>D9205  执行回送的站<br>D9206  执行回送的站<br>D9207  通讯扫描时间(最大值)<br>D9208  通讯扫描时间(最小值)<br>D9209  通讯扫描时间(当前值)<br>D9210  重发次数<br>D9211  环路切换计数<br>D9212  就地站运行状态(1</del>16)<br>D9213  就地站运行状态(17<del>32)<br>D9214  就地站运行状态(33</del>48)<br>D9215  就地站运行状态(49<del>64)<br>D9216  就地站出错检测(1</del>16)<br>D9217  就地站出错检测(17<del>32)<br>D9218  就地站出错检测(33</del>48)<br>D9219  就地站出错检测(49<del>64)<br>D9220  就地站参数不匹配或(1</del>16)<br>            远程站I&#x2F;O分配出错<br>D9221  就地站参数不匹配或(17<del>32)<br>            远程站I&#x2F;O分配出错<br>D9222  就地站参数不匹配或(33</del>48)<br>            远程站I&#x2F;O分配出错<br>D9223  就地站参数不匹配或(49<del>64)<br>            远程站I&#x2F;O分配出错<br>D9224  主站与从站和远程I&#x2F;O站<br>            之间的初始通讯(1</del>16)<br>D9225  主站与从站和远程I&#x2F;O站<br>            之间的初始通讯(17<del>32)<br>D9226  主站与从站和远程I&#x2F;O站<br>            之间的初始通讯(33</del>48)<br>D9227  主站与从站和远程I&#x2F;O站<br>            之间的初始通讯(49<del>64)<br>D9228  就地站或远程I&#x2F;O站出错(1</del>16)<br>D9229  就地站或远程I&#x2F;O站出错(17<del>32)<br>D9230  就地站或远程I&#x2F;O站出错(33</del>48)<br>D9231  就地站或远程I&#x2F;O站出错(49~64)<br>D9232  就地站或远程I&#x2F;O站环路出错<br>D9233  就地站或远程I&#x2F;O站环路出错<br>D9234  就地站或远程I&#x2F;O站环路出错<br>D9235  就地站或远程I&#x2F;O站环路出错<br>D9236  就地站或远程I&#x2F;O站环路出错<br>D9237  就地站或远程I&#x2F;O站环路出错<br>D9238  就地站或远程I&#x2F;O站环路出错<br>D9239  就地站或远程I&#x2F;O站环路出错<br>D9240  检测到接收出错的次数<br>D9243  本站站号检测<br>D9244  从站的总数<br>D9245  检测到的接收出错次数<br>D9248  就地站运行状态<br>D9249  就地站运行状态<br>D9250  就地站运行状态<br>D9251  就地站运行状态<br>D9252  就地站出错检测<br>D9253  就地站出错检测<br>D9254  就地站出错检测<br>D9255  就地站出错检测  </p>
+<h1 id="各种软元件一览表"><a href="#各种软元件一览表" class="headerlink" title="各种软元件一览表"></a>各种软元件一览表</h1><p>项目A1,A1NA1S A2,A2NA2C A2-S1A2N-S1 A3,A3NA3A A2U,A3UA4U<br>I&#x2F;O软元件点 256 512 1024 2048 8192<br>输入继电器 X 0<del>FF 0</del>1FF 0<del>3FF 0</del>7FF 0<del>FFF<br>输出继电器 Y 0</del>FF 0<del>1FF 0</del>3FF 0<del>7FF 0</del>FFF<br>辅助继电器 内部继电器 (1000点)M0<del>M999 M0</del>M999, M2048<del>8191<br> 特殊继电器 (256点)M9000</del>M9255<br> 锁存继电器 (1048点)L1000<del>L2048<br>通讯用继电器 (2048点)B0</del>B3FF B0<del>BFFF<br>定时器 100ms定时器 (200点)T0</del>T199<br> 10ms定时器 (56点)T200<del>T255<br> 100ms记忆定时器 (0点)<br>计数器 (256点)C0</del>C255<br>寄存器 数据寄存器 (1024点)D0<del>D1023 D0</del>D6143<br> 特殊寄存器 (256点)D9000<del>D9255<br> 通讯寄存器 (1024点)W0</del>W3FF W0<del>WFFF<br>累加器 (2点)A0,A1<br>变址寄存器 (2点)Z, V Z,Z1</del>Z6(7点), V,V1<del>V6(7点)<br>嵌套 (8点)N0</del> N7<br>指针 (256点)P0<del>P255<br>中断指针 (32点)I0</del>I31<br>常数 十进制   K (16位)-32768<del>+32767<br>  (32位)-2147483648 ~+2147483647<br> 十六进制 H (16位)0</del>FFFF<br>  (32位)0~FFFFFFFF</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://shanhaixiansheng.github.io">mountainsea</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://shanhaixiansheng.github.io/post/9116f588.html">https://shanhaixiansheng.github.io/post/9116f588.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://shanhaixiansheng.github.io" target="_blank">mountainsea</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://s1.ax1x.com/2023/01/14/pSM6IZ4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/post/2758ad3f.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://s1.ax1x.com/2023/01/19/pS8JJ4f.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">西门子SCL语言以太网通信的应用</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/touxiang.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">mountainsea</div><div class="author-info__description">追逐梦想是一个脚踏实地的过程</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://code.haiyong.site/moyu/"><i class="iconfont icon-youxishoubing"></i><span>摸鱼</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/shanhaixiansheng" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3520472676@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><b><font color="#e66b6d">双</font> <font color="#e66d98">手</font> <font color="#e66cc6">合</font> <font color="#cc6de6">十</font> <font color="#9770e6">成</font> <font color="#6d93e6">为</font> <font color="#6fcde6">自</font> <font color="#72e6b6">己</font> <font color="#72e689">的</font> <font color="#99e670">神</font>, <font color="#cde670">自</font> <font color="#e6df72">己</font> <font color="#e6c073">所</font> <font color="#e6a271">信</font> <font color="#e6796f">念</font> <font color="#e65454">的</font> <font color="#e63333">即</font> <font color="#e62c2c">是</font> <font color="#e60101">信</font> <font color="#e60101">仰</font></b> <p align="center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/f7384c88956d4378b72e47548e19c9f8.gif" width="50" alt="mao"></p> <p align="center">微信号：SHXSDJJ</p> <p align="center">QQ号：3520472676</p></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%BA%E6%8E%A7%E6%8C%87%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">一、顺控指令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%A7%A6%E7%82%B9%E6%8C%87%E4%BB%A4"><span class="toc-number">1.1.</span> <span class="toc-text">1 触点指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%9E%E6%8E%A5%E6%8C%87%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">2 连接指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BE%93%E5%87%BA%E6%8C%87%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">3 输出指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A7%BB%E4%BD%8D%E6%8C%87%E4%BB%A4"><span class="toc-number">1.4.</span> <span class="toc-text">4 移位指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%85%B6%E5%AE%83%E6%8C%87%E4%BB%A4"><span class="toc-number">1.5.</span> <span class="toc-text">7 其它指令</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4"><span class="toc-number">2.</span> <span class="toc-text">二 基本指令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%AF%94%E8%BE%83%E6%8C%87%E4%BB%A4"><span class="toc-number">2.1.</span> <span class="toc-text">1 比较指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E6%8C%87%E4%BB%A4"><span class="toc-number">2.2.</span> <span class="toc-text">2 算术运算指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-BCD%E2%80%94%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.3.</span> <span class="toc-text">3 BCD—二进制转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%81%E6%8C%87%E4%BB%A4"><span class="toc-number">2.4.</span> <span class="toc-text">4 数据传送指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%94%AF%E6%8C%87%E4%BB%A4"><span class="toc-number">2.5.</span> <span class="toc-text">5 程序分支指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%A8%8B%E5%BA%8F%E5%88%87%E6%8D%A2%E6%8C%87%E4%BB%A4"><span class="toc-number">2.6.</span> <span class="toc-text">6 程序切换指令</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E5%BA%94%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">三 应用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E6%8C%87%E4%BB%A4"><span class="toc-number">3.1.</span> <span class="toc-text">1 逻辑运算指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%97%8B%E8%BD%AC%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">2 旋转指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%A7%BB%E4%BD%8D%E6%8C%87%E4%BB%A4"><span class="toc-number">3.3.</span> <span class="toc-text">3 移位指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%8C%87%E4%BB%A4"><span class="toc-number">3.4.</span> <span class="toc-text">4 数据处理指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%85%88%E8%BF%9B%E5%85%88%E5%87%BA%E6%8C%87%E4%BB%A4"><span class="toc-number">3.5.</span> <span class="toc-text">5 先进先出指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%86%85%E5%AD%98%E7%BC%93%E5%86%B2%E5%8C%BA%E5%AD%98%E5%8F%96%E6%8C%87%E4%BB%A4"><span class="toc-number">3.6.</span> <span class="toc-text">6 内存缓冲区存取指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-FOR-x2F-NEXT%E6%8C%87%E4%BB%A4"><span class="toc-number">3.7.</span> <span class="toc-text">7 FOR&#x2F;NEXT指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%9C%AC%E5%9C%B0%E7%AB%99%E3%80%81%E8%BF%9C%E7%A8%8BI-x2F-O%E7%AB%99%E5%AD%98%E5%8F%96%E6%8C%87%E4%BB%A4"><span class="toc-number">3.8.</span> <span class="toc-text">8 本地站、远程I&#x2F;O站存取指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%98%BE%E7%A4%BA%E6%8C%87%E4%BB%A4"><span class="toc-number">3.9.</span> <span class="toc-text">9 显示指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%85%B6%E5%AE%83%E6%8C%87%E4%BB%A4"><span class="toc-number">3.10.</span> <span class="toc-text">10 其它指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E4%BC%BA%E6%9C%8D%E6%8C%87%E4%BB%A4"><span class="toc-number">3.11.</span> <span class="toc-text">11 伺服指令</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E7%89%B9%E6%AE%8A%E7%BB%A7%E7%94%B5%E5%99%A8M%E6%B8%85%E5%8D%95"><span class="toc-number">4.</span> <span class="toc-text">一特殊继电器M清单</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E7%89%B9%E6%AE%8A%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">5.</span> <span class="toc-text">二 特殊寄存器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%84%E7%A7%8D%E8%BD%AF%E5%85%83%E4%BB%B6%E4%B8%80%E8%A7%88%E8%A1%A8"><span class="toc-number">6.</span> <span class="toc-text">各种软元件一览表</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/9116f588.html" title="三菱PLC指令详细解析"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://s1.ax1x.com/2023/01/14/pSM6IZ4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="三菱PLC指令详细解析"/></a><div class="content"><a class="title" href="/post/9116f588.html" title="三菱PLC指令详细解析">三菱PLC指令详细解析</a><time datetime="2023-02-26T06:02:00.000Z" title="发表于 2023-02-26 14:02:00">2023-02-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/2758ad3f.html" title="西门子SCL语言以太网通信的应用"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://s1.ax1x.com/2023/01/19/pS8JJ4f.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="西门子SCL语言以太网通信的应用"/></a><div class="content"><a class="title" href="/post/2758ad3f.html" title="西门子SCL语言以太网通信的应用">西门子SCL语言以太网通信的应用</a><time datetime="2023-02-20T11:41:49.000Z" title="发表于 2023-02-20 19:41:49">2023-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/f51178f7.html" title="西门子SCL出栈入栈算法"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://s1.ax1x.com/2023/01/19/pS8JJ4f.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="西门子SCL出栈入栈算法"/></a><div class="content"><a class="title" href="/post/f51178f7.html" title="西门子SCL出栈入栈算法">西门子SCL出栈入栈算法</a><time datetime="2023-02-20T07:26:13.000Z" title="发表于 2023-02-20 15:26:13">2023-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/934fc5e6.html" title="RobotStudio多机器人协同工作站"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://s1.ax1x.com/2023/02/19/pSLjrqJ.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RobotStudio多机器人协同工作站"/></a><div class="content"><a class="title" href="/post/934fc5e6.html" title="RobotStudio多机器人协同工作站">RobotStudio多机器人协同工作站</a><time datetime="2023-02-19T07:38:19.000Z" title="发表于 2023-02-19 15:38:19">2023-02-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/2f7bcbe3.html" title="自动运行框架思路"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://s1.ax1x.com/2023/01/19/pS8JJ4f.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="自动运行框架思路"/></a><div class="content"><a class="title" href="/post/2f7bcbe3.html" title="自动运行框架思路">自动运行框架思路</a><time datetime="2023-02-19T03:05:21.000Z" title="发表于 2023-02-19 11:05:21">2023-02-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By mountainsea</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container').forEach(node => {
+            if (node.hasAttribute('display')) {
+              btf.wrap(node, 'div', { class: 'mathjax-overflow' })
+            } else {
+              btf.wrap(node, 'span', { class: 'mathjax-overflow' })
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Oa3ygUSaQoR6UngcoEWvPisu-gzGzoHsz',
+      appKey: 'HwRGUzpf6qbh19OHJUZMCQB9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><script>window.addEventListener('load', () => {
+  const changeContent = (content) => {
+    if (content === '') return content
+
+    content = content.replace(/<img.*?src="(.*?)"?[^\>]+>/ig, '[图片]') // replace image link
+    content = content.replace(/<a[^>]+?href=["']?([^"']+)["']?[^>]*>([^<]+)<\/a>/gi, '[链接]') // replace url
+    content = content.replace(/<pre><code>.*?<\/pre>/gi, '[代码]') // replace code
+    content = content.replace(/<[^>]+>/g,"") // remove html tag
+
+    if (content.length > 150) {
+      content = content.substring(0,150) + '...'
+    }
+    return content
+  }
+
+  const getIcon = (icon, mail) => {
+    if (icon) return icon
+    let defaultIcon = '?d=monsterid'
+    let iconUrl = `https://gravatar.loli.net/avatar/${md5(mail.toLowerCase()) + defaultIcon}`
+    return iconUrl
+  }
+
+  const generateHtml = array => {
+    let result = ''
+
+    if (array.length) {
+      for (let i = 0; i < array.length; i++) {
+        result += '<div class=\'aside-list-item\'>'
+
+        if (true) {
+          const name = 'data-lazy-src'
+          result += `<a href='${array[i].url}' class='thumbnail'><img ${name}='${array[i].avatar}' alt='${array[i].nick}'></a>`
+        }
+
+        result += `<div class='content'>
+        <a class='comment' href='${array[i].url}' title='${array[i].content}'>${array[i].content}</a>
+        <div class='name'><span>${array[i].nick} / </span><time datetime="${array[i].date}">${btf.diffDate(array[i].date, true)}</time></div>
+        </div></div>`
+      }
+    } else {
+      result += '没有评论'
+    }
+
+    let $dom = document.querySelector('#card-newest-comments .aside-list')
+    $dom.innerHTML= result
+    window.lazyLoadInstance && window.lazyLoadInstance.update()
+    window.pjax && window.pjax.refresh($dom)
+  }
+
+  const getComment = () => {
+    const serverURL = 'https://Oa3ygUSa.api.lncldglobal.com'
+
+    var settings = {
+      "method": "GET",
+      "headers": {
+        "X-LC-Id": 'Oa3ygUSaQoR6UngcoEWvPisu-gzGzoHsz',
+        "X-LC-Key": 'HwRGUzpf6qbh19OHJUZMCQB9',
+        "Content-Type": "application/json"
+      },
+    }
+
+    fetch(`${serverURL}/1.1/classes/Comment?limit=6&order=-createdAt`,settings)
+      .then(response => response.json())
+      .then(data => {
+        const valineArray = data.results.map(function (e) {
+          return {
+            'avatar': getIcon(e.QQAvatar, e.mail),
+            'content': changeContent(e.comment),
+            'nick': e.nick,
+            'url': e.url + '#' + e.objectId,
+            'date': e.updatedAt,
+          }
+        })
+        saveToLocal.set('valine-newest-comments', JSON.stringify(valineArray), 10/(60*24))
+        generateHtml(valineArray)
+      }).catch(e => {
+        const $dom = document.querySelector('#card-newest-comments .aside-list')
+        $dom.innerHTML= "无法获取评论，请确认相关配置是否正确"
+      }) 
+  }
+
+  const newestCommentInit = () => {
+    if (document.querySelector('#card-newest-comments .aside-list')) {
+      const data = saveToLocal.get('valine-newest-comments')
+      if (data) {
+        generateHtml(JSON.parse(data))
+      } else {
+        getComment()
+      }
+    }
+  }
+
+  newestCommentInit()
+  document.addEventListener('pjax:complete', newestCommentInit)
+})</script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="false"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"]):not([href="/"]):not([href="m"]):not([href="u"]):not([href="s"]):not([href="i"]):not([href="c"]):not([href="/"]):not([href=" "]):not([href="/"]):not([href="n"]):not([href="o"]):not([href="-"]):not([href="p"]):not([href="j"]):not([href="a"]):not([href="x"]):not([href="/"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img-blog.csdnimg.cn/img_convert/6aff76321bf6609634a66ddbb24dc2c8.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock')
+    parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_injector_config();
+  }
+  </script><script src="https://pv.sohu.com/cityjson?ie=utf-8"></script><script data-pjax src="https://npm.elemecdn.com/hexo-butterfly-clock/lib/clock.min.js"></script><!-- hexo injector body_end end --><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
