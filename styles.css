@@ -374,19 +374,17 @@ footer {
     background: #2980b9;
 }
 
-#adminLoginFooterBtn {
-    background: #9b59b6;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+.admin-link {
+    color: #3498db;
     cursor: pointer;
-    margin-top: 1rem;
-    transition: background 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
 }
 
-#adminLoginFooterBtn:hover {
-    background: #8e44ad;
+.admin-link:hover {
+    color: #2980b9;
+    text-decoration: underline;
 }
 
 /* 响应式设计 */
