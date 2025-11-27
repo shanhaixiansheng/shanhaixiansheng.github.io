@@ -58,37 +58,6 @@
             </div>
         </section>
         
-        <section class="comments-section hidden" id="commentsSection">
-            <div class="container">
-                <h3>用户评论</h3>
-                <div class="comment-stats">
-                    <span>总浏览量: <span id="viewCount">0</span></span>
-                    <span>总查询次数: <span id="searchCount">0</span></span>
-                    <p class="data-sharing-note">※ 评论和统计数据</p>
-                    <div id="syncStatus" class="sync-status">正在同步数据...</div>
-                </div>
-                <div class="comment-form">
-                    <div class="form-group">
-                        <label for="userName">昵称:</label>
-                        <input type="text" id="userName" placeholder="请输入您的昵称">
-                    </div>
-                    <div class="form-group">
-                        <label for="userProvince">省份:</label>
-                        <input type="text" id="userProvince" readonly placeholder="自动获取省份">
-                    </div>
-                    <div class="form-group">
-                        <label for="userComment">评论内容:</label>
-                        <textarea id="userComment" placeholder="请输入您的评论..."></textarea>
-                    </div>
-                    <button id="submitComment">提交评论</button>
-                </div>
-                <div class="comments-list">
-                    <h4>所有评论</h4>
-                    <div id="commentsList"></div>
-                </div>
-            </div>
-        </section>
-        
         <section class="admin-section hidden" id="adminSection">
             <div class="container">
                 <h3>管理员登录</h3>
@@ -124,33 +93,15 @@
                         <p>系统变量: <span id="yaskawa-variable-count">0</span> 条</p>
                     </div>
                 </div>
+                <div class="site-stats">
+                    <h4>网站统计</h4>
+                    <div class="stat-item">
+                        <p>浏览量: <span id="adminViewCount">0</span> 次</p>
+                        <p>查询次数: <span id="adminSearchCount">0</span> 次</p>
+                    </div>
+                </div>
                 <div class="update-info">
                     <p>最后更新时间: <span id="lastUpdate">--</span></p>
-                </div>
-                
-                <div class="admin-tools">
-                    <h4>数据同步工具</h4>
-                    <p>网站访问量: <span id="adminViewCount">0</span></p>
-                    <p>总查询次数: <span id="adminSearchCount">0</span></p>
-                    <p>总评论数: <span id="adminCommentsCount">0</span></p>
-                    
-                    <div class="sync-buttons">
-                        <button id="syncDataBtn">同步数据到共享文件</button>
-                        <button id="downloadStatsBtn">下载统计数据</button>
-                        <button id="downloadCommentsBtn">下载评论数据</button>
-                        <button id="refreshDataBtn">刷新数据</button>
-                    </div>
-                    
-                    <div class="update-guide">
-                        <h5>更新指南:</h5>
-                        <ol>
-                            <li>点击"同步数据到共享文件"收集最新数据</li>
-                            <li>点击"下载统计数据"和"下载评论数据"下载JSON文件</li>
-                            <li>将下载的文件上传到GitHub仓库的data文件夹</li>
-                            <li>等待GitHub Pages自动部署完成</li>
-                        </ol>
-                    </div>
-                    
                     <button id="logoutBtn">退出登录</button>
                 </div>
             </div>
@@ -160,8 +111,7 @@
     <footer>
         <div class="container">
             <p>© 2025 工业机器人查询助手 - 由Life开发</p>
-            <button id="showCommentsBtn" class="footer-btn">查看/发表评论</button>
-            <span id="footerStats" class="footer-stats">浏览: <span id="footerViewCount">0</span> | 查询: <span id="footerSearchCount">0</span></span>
+            <button id="adminLoginFooterBtn" class="footer-btn">管理员登录</button>
         </div>
     </footer>
     
