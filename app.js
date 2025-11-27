@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 加载评论
         loadComments();
+        
+        // 设置评论同步
+        setupCommentSync();
     }, 300);
     
     // 初始化页面
@@ -220,7 +223,8 @@ function performSearch() {
             }
         });
         
-        searchResult = results;
+        // 限制最多显示3条结果
+        searchResult = results.slice(0, 3);
         displayResults();
     }
 }
@@ -461,6 +465,23 @@ function getUserLocation() {
         });
 }
 
+// 脏话过滤
+const forbiddenWords = [
+    '妈的', '傻逼', '神经病', '他妈', '草', '操', '日', 'bitch', 'fuck', '傻', '蠢', 
+    '死', '滚', '废物', '垃圾', '白痴', '混蛋', '狗屎', '王八', '靠', '我操',
+    '婊子', '贱人', '妈了个逼', '妈了个b', '妈了个B', '妈了个屄', '妈了隔壁'
+];
+
+function containsForbiddenWords(text) {
+    const lowerText = text.toLowerCase();
+    for (const word of forbiddenWords) {
+        if (lowerText.includes(word.toLowerCase())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // 评论相关函数
 function toggleCommentsSection() {
     console.log('切换评论区显示状态');
@@ -468,6 +489,10 @@ function toggleCommentsSection() {
     if (commentsSection) {
         commentsSection.classList.toggle('hidden');
         console.log('评论区显示状态切换:', !commentsSection.classList.contains('hidden'));
+        // 显示评论区时重新加载评论
+        if (!commentsSection.classList.contains('hidden')) {
+            loadComments();
+        }
     } else {
         console.error('无法找到评论区元素');
     }
@@ -490,19 +515,39 @@ function submitUserComment() {
         return;
     }
     
+    // 检查用户名和评论内容是否包含脏话
+    if (containsForbiddenWords(userName)) {
+        alert('昵称中包含不当言论，请修改后重新提交');
+        return;
+    }
+    
+    if (containsForbiddenWords(userCommentText)) {
+        alert('评论内容中包含不当言论，请修改后重新提交');
+        return;
+    }
+    
     const comment = {
         name: userName,
         province: userProvince,
         text: userCommentText,
-        time: new Date().toLocaleString()
+        time: new Date().toLocaleString(),
+        id: Date.now().toString() // 添加唯一ID
     };
     
     // 获取现有评论
-    const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    const comments = JSON.parse(localStorage.getItem('robotComments') || '[]');
     comments.unshift(comment); // 新评论添加到前面
     
-    // 保存评论
-    localStorage.setItem('comments', JSON.stringify(comments));
+    // 限制评论数量最多保留50条
+    if (comments.length > 50) {
+        comments.splice(50);
+    }
+    
+    // 保存评论到共享存储
+    localStorage.setItem('robotComments', JSON.stringify(comments));
+    
+    // 通知其他页面有新评论
+    localStorage.setItem('robotCommentsUpdated', Date.now().toString());
     
     // 清空表单
     userNameElement.value = '';
@@ -515,7 +560,7 @@ function submitUserComment() {
 }
 
 function loadComments() {
-    const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    const comments = JSON.parse(localStorage.getItem('robotComments') || '[]');
     const commentsList = document.getElementById('commentsList');
     
     if (!commentsList) {
@@ -542,4 +587,23 @@ function loadComments() {
         `;
         commentsList.appendChild(commentElement);
     });
+}
+
+// 监听评论更新
+function setupCommentSync() {
+    // 监听storage变化
+    window.addEventListener('storage', function(event) {
+        if (event.key === 'robotCommentsUpdated') {
+            loadComments();
+        }
+    });
+    
+    // 定期检查更新
+    setInterval(() => {
+        const lastUpdated = localStorage.getItem('robotCommentsUpdated');
+        if (lastUpdated && (!window.lastCommentUpdate || parseInt(lastUpdated) > window.lastCommentUpdate)) {
+            window.lastCommentUpdate = parseInt(lastUpdated);
+            loadComments();
+        }
+    }, 2000); // 每2秒检查一次
 }
