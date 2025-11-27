@@ -404,21 +404,29 @@ async function updateSharedData(data) {
 
 // 统计相关函数
 async function loadStatistics() {
-    // 尝试从共享数据加载
-    const sharedData = await loadSharedData();
-    
-    // 从localStorage加载本地数据
-    const localViewCount = parseInt(localStorage.getItem('viewCount') || '0');
-    const localSearchCount = parseInt(localStorage.getItem('searchCount') || '0');
-    
-    // 使用共享数据作为基础，加上本地增量
-    viewCount = sharedData.viewCount + localViewCount;
-    searchCount = sharedData.searchCount + localSearchCount;
-    
-    console.log('加载统计数据 - 浏览量:', viewCount, '查询次数:', searchCount);
-    
-    // 使用延迟确保DOM元素已加载
-    setTimeout(updateStatisticsDisplay, 100);
+    try {
+        // 尝试从共享数据加载
+        const sharedData = await loadSharedData();
+        
+        // 从localStorage加载本地数据
+        const localViewCount = parseInt(localStorage.getItem('viewCount') || '0');
+        const localSearchCount = parseInt(localStorage.getItem('searchCount') || '0');
+        
+        // 使用共享数据作为基础，加上本地增量
+        viewCount = sharedData.viewCount + localViewCount;
+        searchCount = sharedData.searchCount + localSearchCount;
+        
+        console.log('加载统计数据 - 浏览量:', viewCount, '查询次数:', searchCount);
+        
+        // 使用延迟确保DOM元素已加载
+        setTimeout(updateStatisticsDisplay, 100);
+    } catch (error) {
+        console.error('加载统计数据失败:', error);
+        // 如果加载失败，使用本地缓存
+        viewCount = parseInt(localStorage.getItem('viewCount') || '0');
+        searchCount = parseInt(localStorage.getItem('searchCount') || '0');
+        setTimeout(updateStatisticsDisplay, 100);
+    }
 }
 
 function updateStatisticsDisplay() {
@@ -594,6 +602,9 @@ async function submitUserComment() {
         return;
     }
     
+    // 显示同步状态
+    showSyncStatus('正在同步评论...');
+    
     const comment = {
         name: userName,
         province: userProvince,
@@ -627,10 +638,11 @@ async function submitUserComment() {
     userNameElement.value = '';
     userCommentElement.value = '';
     
-    // 重新加载评论
-    loadComments();
-    
-    alert('评论发表成功！');
+    // 延迟重新加载评论，让用户看到同步效果
+    setTimeout(() => {
+        loadComments();
+        showSyncStatus('评论同步成功！');
+    }, 1500);
 }
 
 async function loadComments() {
@@ -650,6 +662,12 @@ async function loadComments() {
             commentsList.innerHTML = '<p>暂无评论，快来发表第一条评论吧！</p>';
             return;
         }
+        
+        // 添加同步提示
+        if (window.lastCommentCount !== undefined && window.lastCommentCount !== comments.length) {
+            showSyncStatus(`发现 ${comments.length - window.lastCommentCount} 条新评论`);
+        }
+        window.lastCommentCount = comments.length;
         
         commentsList.innerHTML = '';
         comments.forEach(comment => {
@@ -683,12 +701,34 @@ function setupCommentSync() {
             // 每次显示评论区时重新加载评论
             const commentsSection = document.getElementById('commentsSection');
             if (commentsSection && !commentsSection.classList.contains('hidden')) {
-                loadComments();
+                showSyncStatus('正在检查新评论...');
+                await loadComments();
+                showSyncStatus('评论检查完成');
             }
         } catch (error) {
             console.error('评论同步检查失败:', error);
+            showSyncStatus('评论检查失败');
         }
-    }, 30000); // 每30秒检查一次
+    }, 15000); // 每15秒检查一次，更频繁
+}
+
+// 显示同步状态
+function showSyncStatus(message) {
+    const statusElement = document.getElementById('syncStatus');
+    if (statusElement) {
+        statusElement.textContent = message;
+        statusElement.style.display = 'block';
+        
+        // 重新触发动画
+        statusElement.style.animation = 'none';
+        statusElement.offsetHeight; // 触发重排
+        statusElement.style.animation = 'fadeOut 3s forwards';
+        
+        // 3秒后隐藏状态信息
+        setTimeout(() => {
+            statusElement.style.display = 'none';
+        }, 3000);
+    }
 }
 
 // 设置定期同步
@@ -696,9 +736,25 @@ function setupPeriodicSync() {
     // 定期重新加载统计数据
     setInterval(async () => {
         try {
+            showSyncStatus('正在同步数据...');
             await loadStatistics();
+            showSyncStatus('数据同步完成');
         } catch (error) {
             console.error('定期同步统计数据失败:', error);
+            showSyncStatus('数据同步失败');
         }
     }, 60000); // 每分钟更新一次统计数据
+    
+    // 立即执行一次同步
+    setTimeout(async () => {
+        try {
+            showSyncStatus('正在同步评论和统计数据...');
+            await loadStatistics();
+            await loadComments();
+            showSyncStatus('初始数据同步完成');
+        } catch (error) {
+            console.error('初始同步失败:', error);
+            showSyncStatus('初始数据同步失败');
+        }
+    }, 2000);
 }

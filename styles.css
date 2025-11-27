@@ -382,6 +382,25 @@ header p {
     border: 1px solid #c8e6c9;
 }
 
+.sync-status {
+    display: none;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #e3f2fd;
+    color: #0277bd;
+    border-radius: 4px;
+    border: 1px solid #bbdefb;
+    font-size: 0.9rem;
+    text-align: center;
+    animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 .comment-form {
     background: #f9f9f9;
     padding: 1.5rem;
