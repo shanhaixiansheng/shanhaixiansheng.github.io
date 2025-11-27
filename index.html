@@ -37,37 +37,29 @@
                     <button id="searchBtn">搜索</button>
                 </div>
                 
-                <div class="search-options">
-                    <label>
-                        <input type="radio" name="searchType" value="exact" checked> 精确匹配
-                    </label>
-                    <label>
-                        <input type="radio" name="searchType" value="fuzzy"> 模糊匹配
-                    </label>
-                </div>
+                
             </div>
         </section>
         
-        <section class="results-section">
+        <section class="results-section hidden" id="resultsSection">
             <div class="container">
                 <div id="loadingIndicator" class="hidden">加载中...</div>
                 <div id="noResults" class="hidden">未找到匹配的结果</div>
-                
-                <div class="results-count">
-                    共找到 <span id="resultsCount">0</span> 条结果
-                </div>
-                
                 <div id="searchResults"></div>
-                
-                <div class="pagination">
-                    <button id="prevPage" disabled>上一页</button>
-                    <span id="pageInfo">第 1 页，共 1 页</span>
-                    <button id="nextPage" disabled>下一页</button>
+            </div>
+        </section>
+        
+        <section class="admin-section hidden" id="adminSection">
+            <div class="container">
+                <h3>管理员登录</h3>
+                <div class="admin-login">
+                    <input type="password" id="adminPassword" placeholder="请输入管理员密码">
+                    <button id="adminLoginBtn">登录</button>
                 </div>
             </div>
         </section>
         
-        <section class="data-info">
+        <section class="data-info hidden" id="dataInfo">
             <div class="container">
                 <h3>数据库信息</h3>
                 <div class="data-stats">
@@ -94,6 +86,7 @@
                 </div>
                 <div class="update-info">
                     <p>最后更新时间: <span id="lastUpdate">--</span></p>
+                    <button id="logoutBtn">退出登录</button>
                 </div>
             </div>
         </section>

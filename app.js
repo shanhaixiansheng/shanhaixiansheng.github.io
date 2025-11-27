@@ -1,11 +1,11 @@
 // 全局变量
 let currentBrand = 'fanuc';
 let currentType = 'alarm';
-let currentPage = 1;
-let resultsPerPage = 10;
 let currentData = [];
-let searchResults = [];
+let searchResult = null;
 let dataCache = {};
+let isAdmin = false;
+const ADMIN_PASSWORD = 'robot123'; // 管理员密码
 
 // DOM 元素
 document.addEventListener('DOMContentLoaded', function() {
@@ -13,10 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const brandSelect = document.getElementById('brand');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
-    const searchTypeRadios = document.querySelectorAll('input[name="searchType"]');
     const tabButtons = document.querySelectorAll('.tab-btn');
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
+    const adminPassword = document.getElementById('adminPassword');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const resultsSection = document.getElementById('resultsSection');
+    const adminSection = document.getElementById('adminSection');
+    const dataInfo = document.getElementById('dataInfo');
     
     // 事件监听器
     brandSelect.addEventListener('change', handleBrandChange);
@@ -31,8 +34,14 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', handleTabChange);
     });
     
-    prevPageBtn.addEventListener('click', () => changePage(-1));
-    nextPageBtn.addEventListener('click', () => changePage(1));
+    adminLoginBtn.addEventListener('click', handleAdminLogin);
+    adminPassword.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleAdminLogin();
+        }
+    });
+    
+    logoutBtn.addEventListener('click', handleLogout);
     
     // 初始化页面
     initializePage();
@@ -46,12 +55,13 @@ async function initializePage() {
     // 显示默认品牌的数据
     await loadBrandData(currentBrand);
     
-    // 更新数据统计信息
-    updateDataStats();
+    // 更新数据统计信息（仅管理员可见）
+    if (isAdmin) {
+        updateDataStats();
+    }
     
-    // 显示初始搜索结果
-    searchResults = currentData;
-    displayResults();
+    // 初始不显示任何结果
+    clearResults();
 }
 
 // 加载所有品牌数据
@@ -80,12 +90,14 @@ async function loadBrandData(brand) {
     const cacheKey = `${brand}-${currentType}`;
     currentData = dataCache[cacheKey] ? dataCache[cacheKey].data : [];
     
-    // 更新最后更新时间
-    const lastUpdateElement = document.getElementById('lastUpdate');
-    if (dataCache[cacheKey] && dataCache[cacheKey].lastUpdated) {
-        lastUpdateElement.textContent = dataCache[cacheKey].lastUpdated;
-    } else {
-        lastUpdateElement.textContent = '未知';
+    // 更新最后更新时间（仅管理员可见）
+    if (isAdmin) {
+        const lastUpdateElement = document.getElementById('lastUpdate');
+        if (dataCache[cacheKey] && dataCache[cacheKey].lastUpdated) {
+            lastUpdateElement.textContent = dataCache[cacheKey].lastUpdated;
+        } else {
+            lastUpdateElement.textContent = '未知';
+        }
     }
 }
 
@@ -106,9 +118,8 @@ async function loadData(brand, type) {
 // 品牌变更处理
 function handleBrandChange() {
     currentBrand = document.getElementById('brand').value;
-    currentPage = 1;
     loadBrandData(currentBrand).then(() => {
-        performSearch();
+        clearResults();
     });
 }
 
@@ -122,107 +133,74 @@ function handleTabChange(event) {
     
     // 更新当前数据类型
     currentType = event.target.dataset.tab;
-    currentPage = 1;
     
     // 加载新数据
     loadBrandData(currentBrand).then(() => {
-        performSearch();
+        clearResults();
     });
 }
 
-// 执行搜索
+// 执行精确搜索
 function performSearch() {
     const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-    const searchType = document.querySelector('input[name="searchType"]:checked').value;
     
-    // 重置当前页码
-    currentPage = 1;
-    
-    // 如果搜索词为空，显示所有数据
+    // 如果搜索词为空，清空结果
     if (!searchTerm) {
-        searchResults = [...currentData];
-    } else {
-        // 执行搜索
-        searchResults = filterData(currentData, searchTerm, searchType);
-    }
-    
-    // 显示结果
-    displayResults();
-}
-
-// 数据过滤
-function filterData(data, searchTerm, searchType) {
-    if (searchType === 'exact') {
-        return data.filter(item => {
-            if (currentType === 'alarm') {
-                return item.code.toLowerCase() === searchTerm || 
-                       item.name.toLowerCase() === searchTerm;
-            } else {
-                return item.number.toLowerCase() === searchTerm || 
-                       item.name.toLowerCase() === searchTerm;
-            }
-        });
-    } else { // 模糊匹配
-        return data.filter(item => {
-            if (currentType === 'alarm') {
-                return item.code.toLowerCase().includes(searchTerm) || 
-                       item.name.toLowerCase().includes(searchTerm) ||
-                       item.description.toLowerCase().includes(searchTerm) ||
-                       item.category.toLowerCase().includes(searchTerm) ||
-                       item.level.toLowerCase().includes(searchTerm);
-            } else {
-                return item.number.toLowerCase().includes(searchTerm) || 
-                       item.name.toLowerCase().includes(searchTerm) ||
-                       item.description.toLowerCase().includes(searchTerm) ||
-                       item.category.toLowerCase().includes(searchTerm);
-            }
-        });
-    }
-}
-
-// 显示结果
-function displayResults() {
-    const resultsContainer = document.getElementById('searchResults');
-    const noResultsElement = document.getElementById('noResults');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    const resultsCountElement = document.getElementById('resultsCount');
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const pageInfoElement = document.getElementById('pageInfo');
-    
-    // 隐藏加载指示器和无结果提示
-    loadingIndicator.classList.add('hidden');
-    noResultsElement.classList.add('hidden');
-    
-    // 更新结果计数
-    resultsCountElement.textContent = searchResults.length;
-    
-    // 如果没有结果，显示无结果提示
-    if (searchResults.length === 0) {
-        resultsContainer.innerHTML = '';
-        noResultsElement.classList.remove('hidden');
-        prevPageBtn.disabled = true;
-        nextPageBtn.disabled = true;
-        pageInfoElement.textContent = `第 1 页，共 1 页`;
+        clearResults();
         return;
     }
     
-    // 计算分页
-    const totalPages = Math.ceil(searchResults.length / resultsPerPage);
-    const startIndex = (currentPage - 1) * resultsPerPage;
-    const endIndex = Math.min(startIndex + resultsPerPage, searchResults.length);
-    const pageResults = searchResults.slice(startIndex, endIndex);
-    
-    // 渲染结果
-    resultsContainer.innerHTML = '';
-    pageResults.forEach(item => {
-        resultsContainer.appendChild(createResultElement(item));
+    // 执行精确搜索
+    const result = currentData.find(item => {
+        if (currentType === 'alarm') {
+            return item.code.toLowerCase() === searchTerm;
+        } else {
+            return item.number.toLowerCase() === searchTerm;
+        }
     });
     
-    // 更新分页控件
-    prevPageBtn.disabled = currentPage === 1;
-    nextPageBtn.disabled = currentPage === totalPages;
-    pageInfoElement.textContent = `第 ${currentPage} 页，共 ${totalPages} 页`;
+    searchResult = result;
+    displayResult();
+}
+
+// 显示单个结果
+function displayResult() {
+    const resultsContainer = document.getElementById('searchResults');
+    const noResultsElement = document.getElementById('noResults');
+    const resultsSection = document.getElementById('resultsSection');
+    
+    // 显示结果区域
+    resultsSection.classList.remove('hidden');
+    
+    // 清空之前的结果
+    resultsContainer.innerHTML = '';
+    
+    // 如果没有结果，显示无结果提示
+    if (!searchResult) {
+        resultsContainer.innerHTML = '';
+        noResultsElement.classList.remove('hidden');
+        return;
+    }
+    
+    // 隐藏无结果提示
+    noResultsElement.classList.add('hidden');
+    
+    // 创建并添加结果元素
+    resultsContainer.appendChild(createResultElement(searchResult));
+}
+
+// 清空结果
+function clearResults() {
+    const resultsContainer = document.getElementById('searchResults');
+    const noResultsElement = document.getElementById('noResults');
+    const resultsSection = document.getElementById('resultsSection');
+    
+    // 清空结果区域
+    resultsContainer.innerHTML = '';
+    noResultsElement.classList.add('hidden');
+    resultsSection.classList.add('hidden');
+    
+    searchResult = null;
 }
 
 // 创建结果元素
@@ -280,22 +258,33 @@ function createResultElement(item) {
     return resultDiv;
 }
 
-// 分页处理
-function changePage(direction) {
-    const totalPages = Math.ceil(searchResults.length / resultsPerPage);
-    const newPage = currentPage + direction;
+// 处理管理员登录
+function handleAdminLogin() {
+    const password = document.getElementById('adminPassword').value;
     
-    if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        displayResults();
-        
-        // 滚动到结果区域顶部
-        document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth' });
+    if (password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        document.getElementById('adminSection').classList.add('hidden');
+        document.getElementById('dataInfo').classList.remove('hidden');
+        updateDataStats();
+    } else {
+        alert('密码错误，请重新输入');
+        document.getElementById('adminPassword').value = '';
     }
+}
+
+// 处理管理员登出
+function handleLogout() {
+    isAdmin = false;
+    document.getElementById('dataInfo').classList.add('hidden');
+    document.getElementById('adminSection').classList.remove('hidden');
+    document.getElementById('adminPassword').value = '';
 }
 
 // 更新数据统计
 function updateDataStats() {
+    if (!isAdmin) return;
+    
     for (const brand of ['fanuc', 'kuka', 'abb', 'yaskawa']) {
         const alarmData = dataCache[`${brand}-alarm`] ? dataCache[`${brand}-alarm`].data.length : 0;
         const variableData = dataCache[`${brand}-variable`] ? dataCache[`${brand}-variable`].data.length : 0;
