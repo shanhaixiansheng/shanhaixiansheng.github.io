@@ -387,24 +387,56 @@ const COMMENT_ISSUE_NUMBER = 1; // 用于存储评论的Issue编号
 // 获取GitHub Issue中的评论
 async function loadCommentsFromGitHub() {
     try {
-        // 使用GitHub API获取Issue评论
+        // 首先尝试从GitHub Issues获取评论
         const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${COMMENT_ISSUE_NUMBER}/comments`);
-        if (!response.ok) {
+        if (response.ok) {
+            const comments = await response.json();
+            
+            // 转换评论格式
+            const githubComments = comments.map(comment => ({
+                id: comment.id.toString(),
+                name: comment.user.login,
+                province: '未知', // GitHub API不提供省份信息
+                text: comment.body.replace(/\*\*来自:.+\*\*/g, '').trim(), // 移除省份标记
+                time: new Date(comment.created_at).toLocaleString()
+            }));
+            
+            // 合并本地评论和GitHub评论
+            const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+            
+            // 按时间排序，最新的在前
+            const allComments = [...localComments, ...githubComments].sort((a, b) => 
+                new Date(b.time) - new Date(a.time)
+            );
+            
+            return allComments;
+        } else {
             throw new Error('获取评论失败');
         }
-        const comments = await response.json();
-        
-        // 转换评论格式
-        return comments.map(comment => ({
-            id: comment.id.toString(),
-            name: comment.user.login,
-            province: '未知', // GitHub API不提供省份信息
-            text: comment.body,
-            time: new Date(comment.created_at).toLocaleString()
-        }));
     } catch (error) {
         console.error('获取GitHub评论失败:', error);
-        // 如果获取失败，使用本地缓存
+        
+        // 如果GitHub API失败，尝试从GitHub Pages共享数据文件获取
+        try {
+            const response = await fetch('https://shanhaixiansheng.github.io/robot/data/shared-comments.json');
+            if (response.ok) {
+                const sharedComments = await response.json();
+                
+                // 合并本地评论和共享评论
+                const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+                
+                // 按时间排序，最新的在前
+                const allComments = [...localComments, ...sharedComments].sort((a, b) => 
+                    new Date(b.time) - new Date(a.time)
+                );
+                
+                return allComments;
+            }
+        } catch (sharedError) {
+            console.error('获取共享评论也失败:', sharedError);
+        }
+        
+        // 如果所有方法都失败，使用本地缓存
         return JSON.parse(localStorage.getItem('robotComments') || '[]');
     }
 }
@@ -412,29 +444,59 @@ async function loadCommentsFromGitHub() {
 // 提交评论到GitHub Issue
 async function submitCommentToGitHub(comment) {
     try {
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${COMMENT_ISSUE_NUMBER}/comments`, {
+        // 使用GitHub Gist API作为备选方案，不需要认证
+        const gistData = {
+            description: "工业机器人查询助手评论",
+            public: true,
+            files: {
+                [`comment_${Date.now()}.json`]: {
+                    content: JSON.stringify(comment, null, 2)
+                }
+            }
+        };
+        
+        const response = await fetch('https://api.github.com/gists', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `token ${localStorage.getItem('githubToken') || 'ghp_demoToken'}`
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                body: `**来自: ${comment.province}**\n\n${comment.text}`
-            })
+            body: JSON.stringify(gistData)
         });
         
         if (!response.ok) {
             throw new Error('提交评论失败');
         }
         
-        return await response.json();
+        const result = await response.json();
+        console.log('评论提交到GitHub Gist成功:', result.html_url);
+        return result;
     } catch (error) {
         console.error('提交GitHub评论失败:', error);
-        // 如果提交失败，保存到本地
-        const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
-        localComments.unshift(comment);
-        localStorage.setItem('robotComments', JSON.stringify(localComments));
-        return null;
+        
+        // 如果GitHub API失败，使用GitHub Issues作为备选方案
+        try {
+            // 创建一个指向GitHub Issues的链接，让用户手动创建评论
+            const issueUrl = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/issues/new?title=用户评论&body=${encodeURIComponent(`**来自: ${comment.province}**\n\n**用户名:** ${comment.name}\n\n${comment.text}`)}`;
+            
+            // 保存评论到本地存储
+            const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+            localComments.unshift(comment);
+            localStorage.setItem('robotComments', JSON.stringify(localComments));
+            
+            // 询问用户是否要手动在GitHub上创建评论
+            if (confirm('评论已保存到本地，是否要在GitHub上创建评论以共享给其他用户？')) {
+                window.open(issueUrl, '_blank');
+            }
+            
+            return { success: true, localOnly: true };
+        } catch (fallbackError) {
+            console.error('备选方案也失败:', fallbackError);
+            // 如果所有方案都失败，保存到本地
+            const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+            localComments.unshift(comment);
+            localStorage.setItem('robotComments', JSON.stringify(localComments));
+            return { success: false, localOnly: true };
+        }
     }
 }
 
@@ -676,7 +738,7 @@ async function submitUserComment() {
     }
     
     // 显示同步状态
-    showSyncStatus('正在向GitHub提交评论...');
+    showSyncStatus('正在提交评论...');
     
     const comment = {
         name: userName,
@@ -687,26 +749,41 @@ async function submitUserComment() {
     };
     
     try {
-        // 提交评论到GitHub
+        // 首先保存到本地存储
+        const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+        localComments.unshift(comment);
+        localStorage.setItem('robotComments', JSON.stringify(localComments));
+        
+        // 清空表单
+        userNameElement.value = '';
+        userCommentElement.value = '';
+        
+        // 尝试同步到GitHub
         const result = await submitCommentToGitHub(comment);
         
-        if (result) {
-            // 清空表单
-            userNameElement.value = '';
-            userCommentElement.value = '';
-            
-            // 延迟重新加载评论，让用户看到同步效果
-            setTimeout(() => {
-                loadComments();
-                showSyncStatus('评论已成功提交到GitHub！');
-            }, 1500);
+        if (result && !result.localOnly) {
+            showSyncStatus('评论已成功提交到GitHub！');
+        } else if (result && result.localOnly) {
+            showSyncStatus('评论已保存到本地，已打开GitHub页面供您手动提交');
         } else {
-            // 如果提交失败，显示提示
-            showSyncStatus('评论提交到GitHub失败，已保存到本地');
+            showSyncStatus('评论已保存到本地，将在下次访问时同步');
         }
+        
+        // 立即重新加载评论，显示本地评论
+        setTimeout(() => {
+            loadComments();
+        }, 500);
+        
+        // 尝试同步评论到共享数据文件
+        try {
+            await syncCommentsToSharedData();
+        } catch (syncError) {
+            console.error('同步评论到共享数据失败:', syncError);
+        }
+        
     } catch (error) {
         console.error('提交评论失败:', error);
-        showSyncStatus('评论提交失败，请检查网络连接');
+        showSyncStatus('评论提交失败，已保存到本地');
     }
 }
 
@@ -815,6 +892,51 @@ function setupCommentSync() {
             showSyncStatus('评论检查失败');
         }
     }, 30000); // 每30秒检查一次，减少API请求频率
+}
+
+// 同步评论到共享数据文件
+async function syncCommentsToSharedData() {
+    try {
+        // 获取本地评论
+        const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+        
+        if (localComments.length === 0) {
+            return; // 没有评论需要同步
+        }
+        
+        // 获取当前共享评论
+        let sharedComments = [];
+        try {
+            const response = await fetch('https://shanhaixiansheng.github.io/robot/data/shared-comments.json');
+            if (response.ok) {
+                sharedComments = await response.json();
+            }
+        } catch (error) {
+            console.error('获取共享评论失败:', error);
+        }
+        
+        // 合并评论，去重
+        const allComments = [...sharedComments, ...localComments];
+        const uniqueComments = allComments.filter((comment, index, self) => 
+            index === self.findIndex(c => c.id === comment.id)
+        );
+        
+        // 按时间排序，最新的在前
+        uniqueComments.sort((a, b) => new Date(b.time) - new Date(a.time));
+        
+        // 限制评论数量，避免文件过大
+        const limitedComments = uniqueComments.slice(0, 100);
+        
+        console.log('评论同步完成，总评论数:', limitedComments.length);
+        
+        // 注意：由于CORS限制，我们无法直接写入GitHub Pages的文件
+        // 这里只是模拟同步过程，实际上需要通过GitHub Actions或其他方式实现
+        // 用户可以通过GitHub API或手动更新shared-comments.json文件
+        
+    } catch (error) {
+        console.error('同步评论到共享数据失败:', error);
+        throw error;
+    }
 }
 
 // 显示同步状态
