@@ -65,6 +65,21 @@ document.addEventListener('DOMContentLoaded', function() {
     showCommentsBtn.addEventListener('click', toggleCommentsSection);
     submitComment.addEventListener('click', submitUserComment);
     
+    // 添加一些延迟，确保DOM完全加载
+    setTimeout(() => {
+        // 初始化统计数据
+        loadStatistics();
+        
+        // 增加浏览量
+        incrementViewCount();
+        
+        // 获取用户位置信息
+        getUserLocation();
+        
+        // 加载评论
+        loadComments();
+    }, 300);
+    
     // 初始化页面
     initializePage();
 });
@@ -84,16 +99,6 @@ async function initializePage() {
     
     // 初始不显示任何结果
     clearResults();
-    
-    // 初始化统计数据
-    loadStatistics();
-    incrementViewCount();
-    
-    // 获取用户位置信息
-    getUserLocation();
-    
-    // 加载评论
-    loadComments();
 }
 
 // 加载所有品牌数据
@@ -373,27 +378,58 @@ function loadStatistics() {
     viewCount = parseInt(localStorage.getItem('viewCount') || '0');
     searchCount = parseInt(localStorage.getItem('searchCount') || '0');
     
-    // 更新显示
-    updateStatisticsDisplay();
+    console.log('加载统计数据 - 浏览量:', viewCount, '查询次数:', searchCount);
+    
+    // 使用延迟确保DOM元素已加载
+    setTimeout(updateStatisticsDisplay, 100);
 }
 
 function updateStatisticsDisplay() {
+    // 确保元素存在
+    const viewCountElement = document.getElementById('viewCount');
+    const searchCountElement = document.getElementById('searchCount');
+    const footerViewCountElement = document.getElementById('footerViewCount');
+    const footerSearchCountElement = document.getElementById('footerSearchCount');
+    
     // 更新页面中的统计显示
-    document.getElementById('viewCount').textContent = viewCount;
-    document.getElementById('searchCount').textContent = searchCount;
-    document.getElementById('footerViewCount').textContent = viewCount;
-    document.getElementById('footerSearchCount').textContent = searchCount;
+    if (viewCountElement) {
+        viewCountElement.textContent = viewCount;
+        console.log('更新浏览量显示:', viewCount);
+    } else {
+        console.error('无法找到viewCount元素');
+    }
+    
+    if (searchCountElement) {
+        searchCountElement.textContent = searchCount;
+        console.log('更新查询次数显示:', searchCount);
+    } else {
+        console.error('无法找到searchCount元素');
+    }
+    
+    if (footerViewCountElement) {
+        footerViewCountElement.textContent = viewCount;
+    } else {
+        console.error('无法找到footerViewCount元素');
+    }
+    
+    if (footerSearchCountElement) {
+        footerSearchCountElement.textContent = searchCount;
+    } else {
+        console.error('无法找到footerSearchCount元素');
+    }
 }
 
 function incrementViewCount() {
     viewCount++;
     localStorage.setItem('viewCount', viewCount.toString());
+    console.log('浏览量增加:', viewCount);
     updateStatisticsDisplay();
 }
 
 function incrementSearchCount() {
     searchCount++;
     localStorage.setItem('searchCount', searchCount.toString());
+    console.log('查询次数增加:', searchCount);
     updateStatisticsDisplay();
 }
 
@@ -427,13 +463,27 @@ function getUserLocation() {
 
 // 评论相关函数
 function toggleCommentsSection() {
+    console.log('切换评论区显示状态');
     const commentsSection = document.getElementById('commentsSection');
-    commentsSection.classList.toggle('hidden');
+    if (commentsSection) {
+        commentsSection.classList.toggle('hidden');
+        console.log('评论区显示状态切换:', !commentsSection.classList.contains('hidden'));
+    } else {
+        console.error('无法找到评论区元素');
+    }
 }
 
 function submitUserComment() {
-    const userName = document.getElementById('userName').value.trim();
-    const userCommentText = document.getElementById('userComment').value.trim();
+    const userNameElement = document.getElementById('userName');
+    const userCommentElement = document.getElementById('userComment');
+    
+    if (!userNameElement || !userCommentElement) {
+        console.error('无法找到评论表单元素');
+        return;
+    }
+    
+    const userName = userNameElement.value.trim();
+    const userCommentText = userCommentElement.value.trim();
     
     if (!userName || !userCommentText) {
         alert('请填写昵称和评论内容');
@@ -455,8 +505,8 @@ function submitUserComment() {
     localStorage.setItem('comments', JSON.stringify(comments));
     
     // 清空表单
-    document.getElementById('userName').value = '';
-    document.getElementById('userComment').value = '';
+    userNameElement.value = '';
+    userCommentElement.value = '';
     
     // 重新加载评论
     loadComments();
@@ -467,6 +517,11 @@ function submitUserComment() {
 function loadComments() {
     const comments = JSON.parse(localStorage.getItem('comments') || '[]');
     const commentsList = document.getElementById('commentsList');
+    
+    if (!commentsList) {
+        console.error('无法找到评论列表元素');
+        return;
+    }
     
     if (comments.length === 0) {
         commentsList.innerHTML = '<p>暂无评论，快来发表第一条评论吧！</p>';
