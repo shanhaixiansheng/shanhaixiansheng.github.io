@@ -61,10 +61,17 @@
         <section class="comments-section hidden" id="commentsSection">
             <div class="container">
                 <h3>用户评论</h3>
+                <div class="github-setup-note">
+                    <p><strong>管理员设置指南：</strong></p>
+                    <p>1. 访问 <a href="https://github.com/shanhaixiansheng/robot/issues" target="_blank">GitHub Issues</a></p>
+                    <p>2. 创建Issue #1 用于存储用户评论</p>
+                    <p>3. 创建Issue #2 用于存储统计数据（格式：{"viewCount": 100, "searchCount": 50}）</p>
+                    <p>完成设置后，评论和统计数据将自动同步</p>
+                </div>
                 <div class="comment-stats">
                     <span>总浏览量: <span id="viewCount">0</span></span>
                     <span>总查询次数: <span id="searchCount">0</span></span>
-                    <p class="data-sharing-note">※ 评论和统计数据为所有用户共享</p>
+                    <p class="data-sharing-note">※ 评论和统计数据通过GitHub实现共享</p>
                     <div id="syncStatus" class="sync-status">正在同步数据...</div>
                 </div>
                 <div class="comment-form">

@@ -401,6 +401,38 @@ header p {
     100% { opacity: 0; }
 }
 
+.local-cache {
+    border-left: 3px solid #ff9800;
+    padding-left: 10px;
+}
+
+.sync-error {
+    color: #e53935;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.github-setup-note {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.github-setup-note p {
+    margin: 0.5rem 0;
+}
+
+.github-setup-note a {
+    color: #0277bd;
+    text-decoration: none;
+}
+
+.github-setup-note a:hover {
+    text-decoration: underline;
+}
+
 .comment-form {
     background: #f9f9f9;
     padding: 1.5rem;

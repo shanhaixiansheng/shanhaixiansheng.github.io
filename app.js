@@ -379,42 +379,115 @@ function updateDataStats() {
     }
 }
 
-// 获取共享数据
-async function loadSharedData() {
+// GitHub仓库信息
+const GITHUB_OWNER = 'shanhaixiansheng';
+const GITHUB_REPO = 'robot';
+const COMMENT_ISSUE_NUMBER = 1; // 用于存储评论的Issue编号
+
+// 获取GitHub Issue中的评论
+async function loadCommentsFromGitHub() {
     try {
-        const response = await fetch('https://raw.githubusercontent.com/shanhaixiansheng/robot/main/data/shared-data.json?t=' + Date.now());
+        // 使用GitHub API获取Issue评论
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${COMMENT_ISSUE_NUMBER}/comments`);
         if (!response.ok) {
-            throw new Error('获取共享数据失败');
+            throw new Error('获取评论失败');
         }
-        return await response.json();
+        const comments = await response.json();
+        
+        // 转换评论格式
+        return comments.map(comment => ({
+            id: comment.id.toString(),
+            name: comment.user.login,
+            province: '未知', // GitHub API不提供省份信息
+            text: comment.body,
+            time: new Date(comment.created_at).toLocaleString()
+        }));
     } catch (error) {
-        console.error('获取共享数据失败:', error);
+        console.error('获取GitHub评论失败:', error);
         // 如果获取失败，使用本地缓存
-        return JSON.parse(localStorage.getItem('robotSharedData') || '{"comments":[],"viewCount":0,"searchCount":0}');
+        return JSON.parse(localStorage.getItem('robotComments') || '[]');
     }
 }
 
-// 更新共享数据（这需要通过GitHub API）
-async function updateSharedData(data) {
-    // 存储到本地缓存
-    localStorage.setItem('robotSharedData', JSON.stringify(data));
-    // 注意：实际更新GitHub需要API密钥，这里只是模拟
-    console.log('共享数据已更新到本地缓存');
+// 提交评论到GitHub Issue
+async function submitCommentToGitHub(comment) {
+    try {
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${COMMENT_ISSUE_NUMBER}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `token ${localStorage.getItem('githubToken') || 'ghp_demoToken'}`
+            },
+            body: JSON.stringify({
+                body: `**来自: ${comment.province}**\n\n${comment.text}`
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('提交评论失败');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('提交GitHub评论失败:', error);
+        // 如果提交失败，保存到本地
+        const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
+        localComments.unshift(comment);
+        localStorage.setItem('robotComments', JSON.stringify(localComments));
+        return null;
+    }
+}
+
+// 获取统计数据
+async function getStatisticsFromGitHub() {
+    try {
+        // 获取仓库信息
+        const repoResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`);
+        if (!repoResponse.ok) {
+            throw new Error('获取仓库信息失败');
+        }
+        const repoData = await repoResponse.json();
+        
+        // 获取特定Issue信息（Issue编号2用于统计数据）
+        const issueResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/2`);
+        let statsData = { viewCount: 0, searchCount: 0 };
+        
+        if (issueResponse.ok) {
+            const issueData = await issueResponse.json();
+            try {
+                statsData = JSON.parse(issueData.body);
+            } catch (e) {
+                console.error('解析统计数据失败:', e);
+            }
+        }
+        
+        return {
+            viewCount: statsData.viewCount || repoData.watchers_count,
+            searchCount: statsData.searchCount || repoData.open_issues_count
+        };
+    } catch (error) {
+        console.error('获取GitHub统计数据失败:', error);
+        // 如果获取失败，使用本地缓存
+        return JSON.parse(localStorage.getItem('robotStats') || '{"viewCount":0,"searchCount":0}');
+    }
 }
 
 // 统计相关函数
 async function loadStatistics() {
     try {
-        // 尝试从共享数据加载
-        const sharedData = await loadSharedData();
+        // 从GitHub获取统计数据
+        const githubStats = await getStatisticsFromGitHub();
         
         // 从localStorage加载本地数据
         const localViewCount = parseInt(localStorage.getItem('viewCount') || '0');
         const localSearchCount = parseInt(localStorage.getItem('searchCount') || '0');
         
-        // 使用共享数据作为基础，加上本地增量
-        viewCount = sharedData.viewCount + localViewCount;
-        searchCount = sharedData.searchCount + localSearchCount;
+        // 使用GitHub数据作为基础，加上本地增量
+        viewCount = githubStats.viewCount + localViewCount;
+        searchCount = githubStats.searchCount + localSearchCount;
+        
+        // 保存到本地缓存
+        localStorage.setItem('robotStats', JSON.stringify(githubStats));
         
         console.log('加载统计数据 - 浏览量:', viewCount, '查询次数:', searchCount);
         
@@ -603,7 +676,7 @@ async function submitUserComment() {
     }
     
     // 显示同步状态
-    showSyncStatus('正在同步评论...');
+    showSyncStatus('正在向GitHub提交评论...');
     
     const comment = {
         name: userName,
@@ -613,43 +686,34 @@ async function submitUserComment() {
         id: Date.now().toString() // 添加唯一ID
     };
     
-    // 获取当前共享数据
-    const sharedData = await loadSharedData();
-    
-    // 添加新评论
-    sharedData.comments.unshift(comment);
-    
-    // 限制评论数量最多保留50条
-    if (sharedData.comments.length > 50) {
-        sharedData.comments.splice(50);
+    try {
+        // 提交评论到GitHub
+        const result = await submitCommentToGitHub(comment);
+        
+        if (result) {
+            // 清空表单
+            userNameElement.value = '';
+            userCommentElement.value = '';
+            
+            // 延迟重新加载评论，让用户看到同步效果
+            setTimeout(() => {
+                loadComments();
+                showSyncStatus('评论已成功提交到GitHub！');
+            }, 1500);
+        } else {
+            // 如果提交失败，显示提示
+            showSyncStatus('评论提交到GitHub失败，已保存到本地');
+        }
+    } catch (error) {
+        console.error('提交评论失败:', error);
+        showSyncStatus('评论提交失败，请检查网络连接');
     }
-    
-    // 更新时间戳
-    sharedData.lastUpdated = new Date().toISOString();
-    
-    // 保存到本地缓存
-    await updateSharedData(sharedData);
-    
-    // 同时保存到localStorage作为备份
-    localStorage.setItem('robotComments', JSON.stringify(sharedData.comments));
-    localStorage.setItem('robotCommentsUpdated', Date.now().toString());
-    
-    // 清空表单
-    userNameElement.value = '';
-    userCommentElement.value = '';
-    
-    // 延迟重新加载评论，让用户看到同步效果
-    setTimeout(() => {
-        loadComments();
-        showSyncStatus('评论同步成功！');
-    }, 1500);
 }
 
 async function loadComments() {
     try {
-        // 尝试从GitHub加载共享评论
-        const sharedData = await loadSharedData();
-        const comments = sharedData.comments || [];
+        // 从GitHub加载评论
+        const comments = await loadCommentsFromGitHub();
         
         const commentsList = document.getElementById('commentsList');
         
@@ -669,6 +733,9 @@ async function loadComments() {
         }
         window.lastCommentCount = comments.length;
         
+        // 保存到本地缓存
+        localStorage.setItem('robotComments', JSON.stringify(comments));
+        
         commentsList.innerHTML = '';
         comments.forEach(comment => {
             const commentElement = document.createElement('div');
@@ -685,20 +752,58 @@ async function loadComments() {
         });
     } catch (error) {
         console.error('加载评论失败:', error);
-        // 如果加载失败，显示错误信息
+        // 如果加载失败，使用本地缓存
+        const localComments = JSON.parse(localStorage.getItem('robotComments') || '[]');
         const commentsList = document.getElementById('commentsList');
+        
         if (commentsList) {
-            commentsList.innerHTML = '<p>加载评论失败，请刷新页面重试。</p>';
+            if (localComments.length === 0) {
+                commentsList.innerHTML = '<p>从GitHub加载评论失败，显示本地缓存评论。</p>';
+                return;
+            }
+            
+            commentsList.innerHTML = '<p class="sync-error">无法连接到GitHub，显示本地缓存评论：</p>';
+            localComments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment-item local-cache';
+                commentElement.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-author">${comment.name}</span>
+                        <span class="comment-province">${comment.province}</span>
+                        <span class="comment-time">${comment.time}</span>
+                    </div>
+                    <div class="comment-content">${comment.text}</div>
+                `;
+                commentsList.appendChild(commentElement);
+            });
         }
     }
 }
 
 // 监听评论更新
 function setupCommentSync() {
-    // 定期检查更新
+    // 检测页面可见性变化，只在页面可见时检查更新
+    document.addEventListener('visibilitychange', async () => {
+        if (!document.hidden) {
+            // 页面变为可见时检查更新
+            try {
+                const commentsSection = document.getElementById('commentsSection');
+                if (commentsSection && !commentsSection.classList.contains('hidden')) {
+                    showSyncStatus('正在检查GitHub新评论...');
+                    await loadComments();
+                    showSyncStatus('评论检查完成');
+                }
+            } catch (error) {
+                console.error('评论同步检查失败:', error);
+                showSyncStatus('评论检查失败');
+            }
+        }
+    });
+    
+    // 定期检查更新，但间隔更长
     setInterval(async () => {
         try {
-            // 每次显示评论区时重新加载评论
+            // 只在评论区显示时检查
             const commentsSection = document.getElementById('commentsSection');
             if (commentsSection && !commentsSection.classList.contains('hidden')) {
                 showSyncStatus('正在检查新评论...');
@@ -709,7 +814,7 @@ function setupCommentSync() {
             console.error('评论同步检查失败:', error);
             showSyncStatus('评论检查失败');
         }
-    }, 15000); // 每15秒检查一次，更频繁
+    }, 30000); // 每30秒检查一次，减少API请求频率
 }
 
 // 显示同步状态
@@ -733,25 +838,43 @@ function showSyncStatus(message) {
 
 // 设置定期同步
 function setupPeriodicSync() {
-    // 定期重新加载统计数据
+    // 使用页面可见性检测，优化性能
+    document.addEventListener('visibilitychange', async () => {
+        if (!document.hidden) {
+            // 页面变为可见时同步统计数据
+            try {
+                showSyncStatus('正在从GitHub同步数据...');
+                await loadStatistics();
+                showSyncStatus('数据同步完成');
+            } catch (error) {
+                console.error('页面可见时同步统计数据失败:', error);
+                showSyncStatus('数据同步失败');
+            }
+        }
+    });
+    
+    // 定期重新加载统计数据，但间隔更长
     setInterval(async () => {
         try {
-            showSyncStatus('正在同步数据...');
-            await loadStatistics();
-            showSyncStatus('数据同步完成');
+            // 只在页面可见时更新
+            if (!document.hidden) {
+                showSyncStatus('正在同步统计数据...');
+                await loadStatistics();
+                showSyncStatus('数据同步完成');
+            }
         } catch (error) {
             console.error('定期同步统计数据失败:', error);
             showSyncStatus('数据同步失败');
         }
-    }, 60000); // 每分钟更新一次统计数据
+    }, 120000); // 每2分钟更新一次统计数据，减少API请求
     
     // 立即执行一次同步
     setTimeout(async () => {
         try {
-            showSyncStatus('正在同步评论和统计数据...');
+            showSyncStatus('正在从GitHub加载评论和统计数据...');
             await loadStatistics();
             await loadComments();
-            showSyncStatus('初始数据同步完成');
+            showSyncStatus('初始GitHub数据同步完成');
         } catch (error) {
             console.error('初始同步失败:', error);
             showSyncStatus('初始数据同步失败');
