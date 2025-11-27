@@ -364,11 +364,22 @@ header p {
 
 .comment-stats {
     display: flex;
-    justify-content: center;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 2rem;
     font-weight: bold;
     color: #3498db;
+}
+
+.data-sharing-note {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #27ae60;
+    background: #e8f5e9;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid #c8e6c9;
 }
 
 .comment-form {

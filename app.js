@@ -81,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 设置评论同步
         setupCommentSync();
+        
+        // 设置定期同步
+        setupPeriodicSync();
     }, 300);
     
     // 初始化页面
@@ -376,11 +379,41 @@ function updateDataStats() {
     }
 }
 
+// 获取共享数据
+async function loadSharedData() {
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/shanhaixiansheng/robot/main/data/shared-data.json?t=' + Date.now());
+        if (!response.ok) {
+            throw new Error('获取共享数据失败');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('获取共享数据失败:', error);
+        // 如果获取失败，使用本地缓存
+        return JSON.parse(localStorage.getItem('robotSharedData') || '{"comments":[],"viewCount":0,"searchCount":0}');
+    }
+}
+
+// 更新共享数据（这需要通过GitHub API）
+async function updateSharedData(data) {
+    // 存储到本地缓存
+    localStorage.setItem('robotSharedData', JSON.stringify(data));
+    // 注意：实际更新GitHub需要API密钥，这里只是模拟
+    console.log('共享数据已更新到本地缓存');
+}
+
 // 统计相关函数
-function loadStatistics() {
-    // 从localStorage加载统计数据
-    viewCount = parseInt(localStorage.getItem('viewCount') || '0');
-    searchCount = parseInt(localStorage.getItem('searchCount') || '0');
+async function loadStatistics() {
+    // 尝试从共享数据加载
+    const sharedData = await loadSharedData();
+    
+    // 从localStorage加载本地数据
+    const localViewCount = parseInt(localStorage.getItem('viewCount') || '0');
+    const localSearchCount = parseInt(localStorage.getItem('searchCount') || '0');
+    
+    // 使用共享数据作为基础，加上本地增量
+    viewCount = sharedData.viewCount + localViewCount;
+    searchCount = sharedData.searchCount + localSearchCount;
     
     console.log('加载统计数据 - 浏览量:', viewCount, '查询次数:', searchCount);
     
@@ -424,17 +457,52 @@ function updateStatisticsDisplay() {
 }
 
 function incrementViewCount() {
+    // 增加本地浏览量
+    const localViewCount = parseInt(localStorage.getItem('viewCount') || '0');
+    localStorage.setItem('viewCount', (localViewCount + 1).toString());
+    
+    // 更新总浏览量
     viewCount++;
-    localStorage.setItem('viewCount', viewCount.toString());
     console.log('浏览量增加:', viewCount);
     updateStatisticsDisplay();
+    
+    // 定期将本地数据同步到共享存储
+    syncStatsToShared();
 }
 
 function incrementSearchCount() {
+    // 增加本地查询次数
+    const localSearchCount = parseInt(localStorage.getItem('searchCount') || '0');
+    localStorage.setItem('searchCount', (localSearchCount + 1).toString());
+    
+    // 更新总查询次数
     searchCount++;
-    localStorage.setItem('searchCount', searchCount.toString());
     console.log('查询次数增加:', searchCount);
     updateStatisticsDisplay();
+    
+    // 定期将本地数据同步到共享存储
+    syncStatsToShared();
+}
+
+// 同步统计数据到共享存储（模拟）
+async function syncStatsToShared() {
+    // 注意：实际应用中，这里应该调用GitHub API更新shared-data.json
+    // 但由于CORS限制和安全考虑，我们只能模拟这个过程
+    
+    // 获取当前共享数据
+    try {
+        const sharedData = await loadSharedData();
+        
+        // 更新统计数据
+        sharedData.viewCount += 1; // 只增加1次，因为我们是在用户访问时调用
+        sharedData.searchCount = parseInt(localStorage.getItem('searchCount') || '0');
+        sharedData.lastUpdated = new Date().toISOString();
+        
+        // 保存到本地缓存
+        await updateSharedData(sharedData);
+    } catch (error) {
+        console.error('同步统计数据失败:', error);
+    }
 }
 
 // 获取用户位置信息
@@ -498,7 +566,7 @@ function toggleCommentsSection() {
     }
 }
 
-function submitUserComment() {
+async function submitUserComment() {
     const userNameElement = document.getElementById('userName');
     const userCommentElement = document.getElementById('userComment');
     
@@ -534,19 +602,25 @@ function submitUserComment() {
         id: Date.now().toString() // 添加唯一ID
     };
     
-    // 获取现有评论
-    const comments = JSON.parse(localStorage.getItem('robotComments') || '[]');
-    comments.unshift(comment); // 新评论添加到前面
+    // 获取当前共享数据
+    const sharedData = await loadSharedData();
+    
+    // 添加新评论
+    sharedData.comments.unshift(comment);
     
     // 限制评论数量最多保留50条
-    if (comments.length > 50) {
-        comments.splice(50);
+    if (sharedData.comments.length > 50) {
+        sharedData.comments.splice(50);
     }
     
-    // 保存评论到共享存储
-    localStorage.setItem('robotComments', JSON.stringify(comments));
+    // 更新时间戳
+    sharedData.lastUpdated = new Date().toISOString();
     
-    // 通知其他页面有新评论
+    // 保存到本地缓存
+    await updateSharedData(sharedData);
+    
+    // 同时保存到localStorage作为备份
+    localStorage.setItem('robotComments', JSON.stringify(sharedData.comments));
     localStorage.setItem('robotCommentsUpdated', Date.now().toString());
     
     // 清空表单
@@ -559,51 +633,72 @@ function submitUserComment() {
     alert('评论发表成功！');
 }
 
-function loadComments() {
-    const comments = JSON.parse(localStorage.getItem('robotComments') || '[]');
-    const commentsList = document.getElementById('commentsList');
-    
-    if (!commentsList) {
-        console.error('无法找到评论列表元素');
-        return;
+async function loadComments() {
+    try {
+        // 尝试从GitHub加载共享评论
+        const sharedData = await loadSharedData();
+        const comments = sharedData.comments || [];
+        
+        const commentsList = document.getElementById('commentsList');
+        
+        if (!commentsList) {
+            console.error('无法找到评论列表元素');
+            return;
+        }
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<p>暂无评论，快来发表第一条评论吧！</p>';
+            return;
+        }
+        
+        commentsList.innerHTML = '';
+        comments.forEach(comment => {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-item';
+            commentElement.innerHTML = `
+                <div class="comment-header">
+                    <span class="comment-author">${comment.name}</span>
+                    <span class="comment-province">${comment.province}</span>
+                    <span class="comment-time">${comment.time}</span>
+                </div>
+                <div class="comment-content">${comment.text}</div>
+            `;
+            commentsList.appendChild(commentElement);
+        });
+    } catch (error) {
+        console.error('加载评论失败:', error);
+        // 如果加载失败，显示错误信息
+        const commentsList = document.getElementById('commentsList');
+        if (commentsList) {
+            commentsList.innerHTML = '<p>加载评论失败，请刷新页面重试。</p>';
+        }
     }
-    
-    if (comments.length === 0) {
-        commentsList.innerHTML = '<p>暂无评论，快来发表第一条评论吧！</p>';
-        return;
-    }
-    
-    commentsList.innerHTML = '';
-    comments.forEach(comment => {
-        const commentElement = document.createElement('div');
-        commentElement.className = 'comment-item';
-        commentElement.innerHTML = `
-            <div class="comment-header">
-                <span class="comment-author">${comment.name}</span>
-                <span class="comment-province">${comment.province}</span>
-                <span class="comment-time">${comment.time}</span>
-            </div>
-            <div class="comment-content">${comment.text}</div>
-        `;
-        commentsList.appendChild(commentElement);
-    });
 }
 
 // 监听评论更新
 function setupCommentSync() {
-    // 监听storage变化
-    window.addEventListener('storage', function(event) {
-        if (event.key === 'robotCommentsUpdated') {
-            loadComments();
-        }
-    });
-    
     // 定期检查更新
-    setInterval(() => {
-        const lastUpdated = localStorage.getItem('robotCommentsUpdated');
-        if (lastUpdated && (!window.lastCommentUpdate || parseInt(lastUpdated) > window.lastCommentUpdate)) {
-            window.lastCommentUpdate = parseInt(lastUpdated);
-            loadComments();
+    setInterval(async () => {
+        try {
+            // 每次显示评论区时重新加载评论
+            const commentsSection = document.getElementById('commentsSection');
+            if (commentsSection && !commentsSection.classList.contains('hidden')) {
+                loadComments();
+            }
+        } catch (error) {
+            console.error('评论同步检查失败:', error);
         }
-    }, 2000); // 每2秒检查一次
+    }, 30000); // 每30秒检查一次
+}
+
+// 设置定期同步
+function setupPeriodicSync() {
+    // 定期重新加载统计数据
+    setInterval(async () => {
+        try {
+            await loadStatistics();
+        } catch (error) {
+            console.error('定期同步统计数据失败:', error);
+        }
+    }, 60000); // 每分钟更新一次统计数据
 }
