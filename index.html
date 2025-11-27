@@ -126,6 +126,31 @@
                 </div>
                 <div class="update-info">
                     <p>最后更新时间: <span id="lastUpdate">--</span></p>
+                </div>
+                
+                <div class="admin-tools">
+                    <h4>数据同步工具</h4>
+                    <p>网站访问量: <span id="adminViewCount">0</span></p>
+                    <p>总查询次数: <span id="adminSearchCount">0</span></p>
+                    <p>总评论数: <span id="adminCommentsCount">0</span></p>
+                    
+                    <div class="sync-buttons">
+                        <button id="syncDataBtn">同步数据到共享文件</button>
+                        <button id="downloadStatsBtn">下载统计数据</button>
+                        <button id="downloadCommentsBtn">下载评论数据</button>
+                        <button id="refreshDataBtn">刷新数据</button>
+                    </div>
+                    
+                    <div class="update-guide">
+                        <h5>更新指南:</h5>
+                        <ol>
+                            <li>点击"同步数据到共享文件"收集最新数据</li>
+                            <li>点击"下载统计数据"和"下载评论数据"下载JSON文件</li>
+                            <li>将下载的文件上传到GitHub仓库的data文件夹</li>
+                            <li>等待GitHub Pages自动部署完成</li>
+                        </ol>
+                    </div>
+                    
                     <button id="logoutBtn">退出登录</button>
                 </div>
             </div>
@@ -140,9 +165,6 @@
         </div>
     </footer>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
