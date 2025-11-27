@@ -11,6 +11,8 @@
         <div class="container">
             <h1>工业机器人查询助手</h1>
             <p>支持主流工业品牌报警代码和系统变量查询</p>
+            <p class="disclaimer">所有资料仅供参考，实际以机器人具体型号为主</p>
+            <p class="disclaimer">所有资料仅供参考，实际以机器人具体型号为主</p>
         </div>
     </header>
     
@@ -33,6 +35,14 @@
                 </div>
                 
                 <div class="search-box">
+                    <div class="search-type">
+                        <label>
+                            <input type="radio" name="searchType" value="exact" checked> 精确匹配
+                        </label>
+                        <label>
+                            <input type="radio" name="searchType" value="fuzzy"> 模糊匹配
+                        </label>
+                    </div>
                     <input type="text" id="searchInput" placeholder="输入报警代码或关键字...">
                     <button id="searchBtn">搜索</button>
                 </div>
@@ -46,6 +56,35 @@
                 <div id="loadingIndicator" class="hidden">加载中...</div>
                 <div id="noResults" class="hidden">未找到匹配的结果</div>
                 <div id="searchResults"></div>
+            </div>
+        </section>
+        
+        <section class="comments-section hidden" id="commentsSection">
+            <div class="container">
+                <h3>用户评论</h3>
+                <div class="comment-stats">
+                    <span>浏览量: <span id="viewCount">0</span></span>
+                    <span>查询次数: <span id="searchCount">0</span></span>
+                </div>
+                <div class="comment-form">
+                    <div class="form-group">
+                        <label for="userName">昵称:</label>
+                        <input type="text" id="userName" placeholder="请输入您的昵称">
+                    </div>
+                    <div class="form-group">
+                        <label for="userProvince">省份:</label>
+                        <input type="text" id="userProvince" readonly placeholder="自动获取省份">
+                    </div>
+                    <div class="form-group">
+                        <label for="userComment">评论内容:</label>
+                        <textarea id="userComment" placeholder="请输入您的评论..."></textarea>
+                    </div>
+                    <button id="submitComment">提交评论</button>
+                </div>
+                <div class="comments-list">
+                    <h4>所有评论</h4>
+                    <div id="commentsList"></div>
+                </div>
             </div>
         </section>
         
@@ -94,7 +133,9 @@
     
     <footer>
         <div class="container">
-            <p>© 2025 工业机器人查询助手 - 由开发者维护</p>
+            <p>© 2025 工业机器人查询助手 - 由Life开发</p>
+            <button id="showCommentsBtn" class="footer-btn">查看/发表评论</button>
+            <span id="footerStats" class="footer-stats">浏览: <span id="footerViewCount">0</span> | 查询: <span id="footerSearchCount">0</span></span>
         </div>
     </footer>
     

@@ -6,6 +6,9 @@ let searchResult = null;
 let dataCache = {};
 let isAdmin = false;
 const ADMIN_PASSWORD = 'robot123'; // 管理员密码
+let viewCount = 0;
+let searchCount = 0;
+let userProvince = '未知';
 
 // DOM 元素
 document.addEventListener('DOMContentLoaded', function() {
@@ -20,6 +23,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultsSection = document.getElementById('resultsSection');
     const adminSection = document.getElementById('adminSection');
     const dataInfo = document.getElementById('dataInfo');
+    
+    // 评论相关元素
+    const showCommentsBtn = document.getElementById('showCommentsBtn');
+    const commentsSection = document.getElementById('commentsSection');
+    const userName = document.getElementById('userName');
+    const userProvinceInput = document.getElementById('userProvince');
+    const userComment = document.getElementById('userComment');
+    const submitComment = document.getElementById('submitComment');
+    const commentsList = document.getElementById('commentsList');
+    
+    // 统计元素
+    const viewCountElement = document.getElementById('viewCount');
+    const searchCountElement = document.getElementById('searchCount');
+    const footerViewCountElement = document.getElementById('footerViewCount');
+    const footerSearchCountElement = document.getElementById('footerSearchCount');
     
     // 事件监听器
     brandSelect.addEventListener('change', handleBrandChange);
@@ -43,6 +61,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     logoutBtn.addEventListener('click', handleLogout);
     
+    // 评论相关事件
+    showCommentsBtn.addEventListener('click', toggleCommentsSection);
+    submitComment.addEventListener('click', submitUserComment);
+    
     // 初始化页面
     initializePage();
 });
@@ -62,6 +84,16 @@ async function initializePage() {
     
     // 初始不显示任何结果
     clearResults();
+    
+    // 初始化统计数据
+    loadStatistics();
+    incrementViewCount();
+    
+    // 获取用户位置信息
+    getUserLocation();
+    
+    // 加载评论
+    loadComments();
 }
 
 // 加载所有品牌数据
@@ -140,9 +172,10 @@ function handleTabChange(event) {
     });
 }
 
-// 执行精确搜索
+// 执行搜索（支持精确和模糊匹配）
 function performSearch() {
     const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    const searchType = document.querySelector('input[name="searchType"]:checked').value;
     
     // 如果搜索词为空，清空结果
     if (!searchTerm) {
@@ -150,17 +183,41 @@ function performSearch() {
         return;
     }
     
-    // 执行精确搜索
-    const result = currentData.find(item => {
-        if (currentType === 'alarm') {
-            return item.code.toLowerCase() === searchTerm;
-        } else {
-            return item.number.toLowerCase() === searchTerm;
-        }
-    });
+    // 更新搜索次数
+    incrementSearchCount();
     
-    searchResult = result;
-    displayResult();
+    // 根据搜索类型执行搜索
+    if (searchType === 'exact') {
+        // 精确搜索
+        const result = currentData.find(item => {
+            if (currentType === 'alarm') {
+                return item.code.toLowerCase() === searchTerm;
+            } else {
+                return item.number.toLowerCase() === searchTerm;
+            }
+        });
+        
+        searchResult = result;
+        displayResult();
+    } else {
+        // 模糊搜索
+        const results = currentData.filter(item => {
+            if (currentType === 'alarm') {
+                return item.code.toLowerCase().includes(searchTerm) || 
+                       item.name.toLowerCase().includes(searchTerm) ||
+                       item.description.toLowerCase().includes(searchTerm) ||
+                       item.category.toLowerCase().includes(searchTerm);
+            } else {
+                return item.number.toLowerCase().includes(searchTerm) || 
+                       item.name.toLowerCase().includes(searchTerm) ||
+                       item.description.toLowerCase().includes(searchTerm) ||
+                       item.category.toLowerCase().includes(searchTerm);
+            }
+        });
+        
+        searchResult = results;
+        displayResults();
+    }
 }
 
 // 显示单个结果
@@ -187,6 +244,34 @@ function displayResult() {
     
     // 创建并添加结果元素
     resultsContainer.appendChild(createResultElement(searchResult));
+}
+
+// 显示多个结果（模糊搜索）
+function displayResults() {
+    const resultsContainer = document.getElementById('searchResults');
+    const noResultsElement = document.getElementById('noResults');
+    const resultsSection = document.getElementById('resultsSection');
+    
+    // 显示结果区域
+    resultsSection.classList.remove('hidden');
+    
+    // 清空之前的结果
+    resultsContainer.innerHTML = '';
+    
+    // 如果没有结果，显示无结果提示
+    if (!searchResult || searchResult.length === 0) {
+        resultsContainer.innerHTML = '';
+        noResultsElement.classList.remove('hidden');
+        return;
+    }
+    
+    // 隐藏无结果提示
+    noResultsElement.classList.add('hidden');
+    
+    // 创建并添加结果元素
+    searchResult.forEach(item => {
+        resultsContainer.appendChild(createResultElement(item));
+    });
 }
 
 // 清空结果
@@ -218,10 +303,6 @@ function createResultElement(item) {
                     <span>类别:</span>
                     <span>${item.category}</span>
                 </div>
-                <div class="result-detail-item">
-                    <span>级别:</span>
-                    <span>${item.level}</span>
-                </div>
             </div>
             <div class="result-solution">
                 <strong>解决方案:</strong> ${item.solution}
@@ -233,14 +314,6 @@ function createResultElement(item) {
             <div class="result-name">${item.name}</div>
             <div class="result-description">${item.description}</div>
             <div class="result-details">
-                <div class="result-detail-item">
-                    <span>数据类型:</span>
-                    <span>${item.dataType}</span>
-                </div>
-                <div class="result-detail-item">
-                    <span>范围:</span>
-                    <span>${item.range}</span>
-                </div>
                 <div class="result-detail-item">
                     <span>类别:</span>
                     <span>${item.category}</span>
@@ -292,4 +365,126 @@ function updateDataStats() {
         document.getElementById(`${brand}-alarm-count`).textContent = alarmData;
         document.getElementById(`${brand}-variable-count`).textContent = variableData;
     }
+}
+
+// 统计相关函数
+function loadStatistics() {
+    // 从localStorage加载统计数据
+    viewCount = parseInt(localStorage.getItem('viewCount') || '0');
+    searchCount = parseInt(localStorage.getItem('searchCount') || '0');
+    
+    // 更新显示
+    updateStatisticsDisplay();
+}
+
+function updateStatisticsDisplay() {
+    // 更新页面中的统计显示
+    document.getElementById('viewCount').textContent = viewCount;
+    document.getElementById('searchCount').textContent = searchCount;
+    document.getElementById('footerViewCount').textContent = viewCount;
+    document.getElementById('footerSearchCount').textContent = searchCount;
+}
+
+function incrementViewCount() {
+    viewCount++;
+    localStorage.setItem('viewCount', viewCount.toString());
+    updateStatisticsDisplay();
+}
+
+function incrementSearchCount() {
+    searchCount++;
+    localStorage.setItem('searchCount', searchCount.toString());
+    updateStatisticsDisplay();
+}
+
+// 获取用户位置信息
+function getUserLocation() {
+    // 使用IP地址获取省份信息
+    fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.region) {
+                userProvince = data.region;
+                document.getElementById('userProvince').value = userProvince;
+            }
+        })
+        .catch(error => {
+            console.error('获取位置信息失败:', error);
+            // 如果获取失败，使用备用API
+            fetch('https://api.ip.sb/geoip')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.region) {
+                        userProvince = data.region;
+                        document.getElementById('userProvince').value = userProvince;
+                    }
+                })
+                .catch(err => {
+                    console.error('备用位置API也失败:', err);
+                });
+        });
+}
+
+// 评论相关函数
+function toggleCommentsSection() {
+    const commentsSection = document.getElementById('commentsSection');
+    commentsSection.classList.toggle('hidden');
+}
+
+function submitUserComment() {
+    const userName = document.getElementById('userName').value.trim();
+    const userCommentText = document.getElementById('userComment').value.trim();
+    
+    if (!userName || !userCommentText) {
+        alert('请填写昵称和评论内容');
+        return;
+    }
+    
+    const comment = {
+        name: userName,
+        province: userProvince,
+        text: userCommentText,
+        time: new Date().toLocaleString()
+    };
+    
+    // 获取现有评论
+    const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    comments.unshift(comment); // 新评论添加到前面
+    
+    // 保存评论
+    localStorage.setItem('comments', JSON.stringify(comments));
+    
+    // 清空表单
+    document.getElementById('userName').value = '';
+    document.getElementById('userComment').value = '';
+    
+    // 重新加载评论
+    loadComments();
+    
+    alert('评论发表成功！');
+}
+
+function loadComments() {
+    const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    const commentsList = document.getElementById('commentsList');
+    
+    if (comments.length === 0) {
+        commentsList.innerHTML = '<p>暂无评论，快来发表第一条评论吧！</p>';
+        return;
+    }
+    
+    commentsList.innerHTML = '';
+    comments.forEach(comment => {
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment-item';
+        commentElement.innerHTML = `
+            <div class="comment-header">
+                <span class="comment-author">${comment.name}</span>
+                <span class="comment-province">${comment.province}</span>
+                <span class="comment-time">${comment.time}</span>
+            </div>
+            <div class="comment-content">${comment.text}</div>
+        `;
+        commentsList.appendChild(commentElement);
+    });
 }
