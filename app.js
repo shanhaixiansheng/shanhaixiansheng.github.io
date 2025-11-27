@@ -308,25 +308,22 @@ function createResultElement(item) {
     return resultDiv;
 }
 
-// 显示管理员登录界面
 function showAdminLogin() {
     document.getElementById('adminSection').classList.remove('hidden');
 }
 
-// 处理管理员登录
+
 function handleAdminLogin() {
     const password = document.getElementById('adminPassword').value;
     
-    // 密码验证逻辑，这里使用简单的提示方式告知密码
-    // 实际部署时，应使用服务器端验证或更安全的方式
+
     if (password === '') {
-        alert('请联系开发者获取管理员密码');
+        alert('上当了吧，哈哈');
         return;
     }
     
-    // 简单的密码验证逻辑（实际使用时请替换为更安全的方式）
-    // 在这里可以使用环境变量或其他安全方式存储密码
-    const validPasswords = ['robot123', 'robot1234', 'robot2025']; // 示例密码数组
+  
+    const validPasswords = ['shanhaixiansheng2810', 'shanhaixiansheng2810', 'shanhaixiansheng2810']; 
     
     if (validPasswords.includes(password)) {
         isAdmin = true;
@@ -340,7 +337,6 @@ function handleAdminLogin() {
     }
 }
 
-// 处理管理员登出
 function handleLogout() {
     isAdmin = false;
     document.getElementById('dataInfo').classList.add('hidden');
