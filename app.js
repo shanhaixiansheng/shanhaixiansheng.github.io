@@ -245,10 +245,22 @@ function displayResults() {
     // 隐藏无结果提示
     noResultsElement.classList.add('hidden');
     
+    // 只显示前3条结果
+    const maxResults = 3;
+    const limitedResults = searchResult.slice(0, maxResults);
+    
     // 创建并添加结果元素
-    searchResult.forEach(item => {
+    limitedResults.forEach(item => {
         resultsContainer.appendChild(createResultElement(item));
     });
+    
+    // 如果搜索结果超过3条，添加提示信息
+    if (searchResult.length > maxResults) {
+        const moreInfo = document.createElement('div');
+        moreInfo.className = 'more-results-info';
+        moreInfo.textContent = `模糊搜索找到 ${searchResult.length} 条结果，仅显示前 ${maxResults} 条。请使用更精确的关键词查找更多信息。`;
+        resultsContainer.appendChild(moreInfo);
+    }
 }
 
 // 清空结果

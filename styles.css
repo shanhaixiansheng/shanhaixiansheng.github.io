@@ -459,3 +459,14 @@ footer {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* 更多结果提示信息 */
+.more-results-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
