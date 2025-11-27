@@ -1,0 +1,47 @@
+{
+  "brand": "Yaskawa",
+  "type": "alarm",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "code": "4000",
+      "name": "紧急停止",
+      "description": "紧急停止信号被激活",
+      "category": "急停报警",
+      "level": "严重",
+      "solution": "检查并释放紧急停止装置"
+    },
+    {
+      "code": "4010",
+      "name": "伺服报警",
+      "description": "伺服系统发生报警",
+      "category": "伺服报警",
+      "level": "严重",
+      "solution": "检查伺服系统和电机连接"
+    },
+    {
+      "code": "4020",
+      "name": "系统报警",
+      "description": "控制系统发生异常",
+      "category": "系统报警",
+      "level": "严重",
+      "solution": "检查控制柜和电源"
+    },
+    {
+      "code": "4030",
+      "name": "程序错误",
+      "description": "程序执行出现错误",
+      "category": "程序报警",
+      "level": "中等",
+      "solution": "检查程序逻辑和语法"
+    },
+    {
+      "code": "4040",
+      "name": "运动超限",
+      "description": "机器人运动超出安全范围",
+      "category": "运动报警",
+      "level": "中等",
+      "solution": "调整工作区域或程序轨迹"
+    }
+  ]
+}

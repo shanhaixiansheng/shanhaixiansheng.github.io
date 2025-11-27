@@ -1,0 +1,277 @@
+{
+  "brand": "FANUC",
+  "type": "variable",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "number": "$ANINU[1]",
+      "name": "模拟输入寄存器1",
+      "description": "接收外部模拟信号输入的寄存器1",
+      "dataType": "数值",
+      "range": "-32768~32767",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$ANINU[2]",
+      "name": "模拟输入寄存器2",
+      "description": "接收外部模拟信号输入的寄存器2",
+      "dataType": "数值",
+      "range": "-32768~32767",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$ANINU[3]",
+      "name": "模拟输入寄存器3",
+      "description": "接收外部模拟信号输入的寄存器3",
+      "dataType": "数值",
+      "range": "-32768~32767",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$ANINU[4]",
+      "name": "模拟输入寄存器4",
+      "description": "接收外部模拟信号输入的寄存器4",
+      "dataType": "数值",
+      "range": "-32768~32767",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$ANOUT[1]",
+      "name": "模拟输出寄存器1",
+      "description": "输出模拟信号的寄存器1",
+      "dataType": "数值",
+      "range": "-32768~32767",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$ANOUT[2]",
+      "name": "模拟输出寄存器2",
+      "description": "输出模拟信号的寄存器2",
+      "dataType": "数值",
+      "range": "-32768~32767",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$DI[1]",
+      "name": "数字输入信号1",
+      "description": "外部数字输入信号1",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$DI[2]",
+      "name": "数字输入信号2",
+      "description": "外部数字输入信号2",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$DO[1]",
+      "name": "数字输出信号1",
+      "description": "外部数字输出信号1",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$DO[2]",
+      "name": "数字输出信号2",
+      "description": "外部数字输出信号2",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$MCR_GRP[1].$UFRAME_NUM",
+      "name": "用户坐标系编号1",
+      "description": "设定机械组1的用户坐标系编号",
+      "dataType": "整数",
+      "range": "0~9",
+      "unit": "",
+      "category": "坐标系"
+    },
+    {
+      "number": "$MCR_GRP[1].$UTOOL_NUM",
+      "name": "工具坐标系编号1",
+      "description": "设定机械组1的工具坐标系编号",
+      "dataType": "整数",
+      "range": "0~9",
+      "unit": "",
+      "category": "坐标系"
+    },
+    {
+      "number": "$MOR_GRP[1].$JG_SPD",
+      "name": "点动速度1",
+      "description": "机械组1的点动运动速度",
+      "dataType": "数值",
+      "range": "0~100",
+      "unit": "%",
+      "category": "运动控制"
+    },
+    {
+      "number": "$MOR_GRP[1].$OV_GAIN",
+      "name": "速度倍率1",
+      "description": "机械组1的速度倍率设定",
+      "dataType": "数值",
+      "range": "0~100",
+      "unit": "%",
+      "category": "运动控制"
+    },
+    {
+      "number": "$PRIORITY[1]",
+      "name": "程序优先级1",
+      "description": "程序1的运行优先级",
+      "dataType": "整数",
+      "range": "1~100",
+      "unit": "",
+      "category": "程序控制"
+    },
+    {
+      "number": "$PRIORITY[2]",
+      "name": "程序优先级2",
+      "description": "程序2的运行优先级",
+      "dataType": "整数",
+      "range": "1~100",
+      "unit": "",
+      "category": "程序控制"
+    },
+    {
+      "number": "$R[1]",
+      "name": "通用寄存器1",
+      "description": "通用数值寄存器1",
+      "dataType": "数值",
+      "range": "依赖于系统",
+      "unit": "",
+      "category": "寄存器"
+    },
+    {
+      "number": "$R[2]",
+      "name": "通用寄存器2",
+      "description": "通用数值寄存器2",
+      "dataType": "数值",
+      "range": "依赖于系统",
+      "unit": "",
+      "category": "寄存器"
+    },
+    {
+      "number": "$R[3]",
+      "name": "通用寄存器3",
+      "description": "通用数值寄存器3",
+      "dataType": "数值",
+      "range": "依赖于系统",
+      "unit": "",
+      "category": "寄存器"
+    },
+    {
+      "number": "$SC_GRP[1].$TIMER_START",
+      "name": "计时器启动标志1",
+      "description": "机械组1的计时器启动标志",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "计时器"
+    },
+    {
+      "number": "$SC_GRP[1].$TIMER_RUN",
+      "name": "计时器运行状态1",
+      "description": "机械组1的计时器运行状态",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "计时器"
+    },
+    {
+      "number": "$SC_GRP[1].$TIMER_VAL",
+      "name": "计时器值1",
+      "description": "机械组1的计时器当前值",
+      "dataType": "数值",
+      "range": "0~9999",
+      "unit": "ms",
+      "category": "计时器"
+    },
+    {
+      "number": "$SHELL_CFG.$COMM_PATH",
+      "name": "通信路径设置",
+      "description": "机器人系统通信路径设置",
+      "dataType": "字符串",
+      "range": "最大80字符",
+      "unit": "",
+      "category": "通信设置"
+    },
+    {
+      "number": "$SHELL_CFG.$HOST_NAME",
+      "name": "主机名",
+      "description": "机器人在网络中的主机名",
+      "dataType": "字符串",
+      "range": "最大40字符",
+      "unit": "",
+      "category": "通信设置"
+    },
+    {
+      "number": "$SHELL_CFG.$IP_ADDR",
+      "name": "IP地址",
+      "description": "机器人的IP地址设置",
+      "dataType": "字符串",
+      "range": "标准IP格式",
+      "unit": "",
+      "category": "通信设置"
+    },
+    {
+      "number": "$TP_COL",
+      "name": "程序计数器",
+      "description": "当前执行的程序行号",
+      "dataType": "整数",
+      "range": "1~9999",
+      "unit": "",
+      "category": "程序状态"
+    },
+    {
+      "number": "$TP_COL_POS",
+      "name": "列位置",
+      "description": "当前执行的程序列位置",
+      "dataType": "整数",
+      "range": "1~999",
+      "unit": "",
+      "category": "程序状态"
+    },
+    {
+      "number": "$TP_LINE_NUMBER",
+      "name": "程序行号",
+      "description": "当前执行的程序行号",
+      "dataType": "整数",
+      "range": "1~9999",
+      "unit": "",
+      "category": "程序状态"
+    },
+    {
+      "number": "$TP_PROGRAM",
+      "name": "当前程序名称",
+      "description": "当前执行的程序名称",
+      "dataType": "字符串",
+      "range": "最大8字符",
+      "unit": "",
+      "category": "程序状态"
+    },
+    {
+      "number": "$TP_STATUS",
+      "name": "程序运行状态",
+      "description": "程序的当前运行状态",
+      "dataType": "整数",
+      "range": "0~5",
+      "unit": "",
+      "category": "程序状态"
+    }
+  ]
+}

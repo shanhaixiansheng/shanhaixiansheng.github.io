@@ -1,0 +1,47 @@
+{
+  "brand": "KUKA",
+  "type": "alarm",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "code": "K001",
+      "name": "紧急停止",
+      "description": "紧急停止装置被激活",
+      "category": "急停报警",
+      "level": "严重",
+      "solution": "检查并释放紧急停止装置"
+    },
+    {
+      "code": "K002",
+      "name": "安全门打开",
+      "description": "安全门被打开",
+      "category": "安全报警",
+      "level": "严重",
+      "solution": "关闭并锁好安全门"
+    },
+    {
+      "code": "K003",
+      "name": "驱动器故障",
+      "description": "驱动器检测到异常",
+      "category": "硬件报警",
+      "level": "严重",
+      "solution": "检查驱动器和电机连接"
+    },
+    {
+      "code": "K101",
+      "name": "程序错误",
+      "description": "程序执行过程中检测到错误",
+      "category": "程序报警",
+      "level": "中等",
+      "solution": "检查程序代码和逻辑"
+    },
+    {
+      "code": "K102",
+      "name": "位置超限",
+      "description": "机器人运动超出安全范围",
+      "category": "运动报警",
+      "level": "中等",
+      "solution": "检查工作区域和机器人位置"
+    }
+  ]
+}

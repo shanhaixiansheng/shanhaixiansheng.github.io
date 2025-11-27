@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工业机器人查询助手</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>工业机器人查询助手</h1>
+            <p>支持主流工业品牌报警代码和系统变量查询</p>
+        </div>
+    </header>
+    
+    <main>
+        <section class="search-section">
+            <div class="container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="alarm">报警代码查询</button>
+                    <button class="tab-btn" data-tab="variable">系统变量查询</button>
+                </div>
+                
+                <div class="brand-selector">
+                    <label for="brand">选择品牌:</label>
+                    <select id="brand">
+                        <option value="fanuc">FANUC</option>
+                        <option value="kuka">KUKA</option>
+                        <option value="abb">ABB</option>
+                        <option value="yaskawa">Yaskawa</option>
+                    </select>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="输入报警代码或关键字...">
+                    <button id="searchBtn">搜索</button>
+                </div>
+                
+                <div class="search-options">
+                    <label>
+                        <input type="radio" name="searchType" value="exact" checked> 精确匹配
+                    </label>
+                    <label>
+                        <input type="radio" name="searchType" value="fuzzy"> 模糊匹配
+                    </label>
+                </div>
+            </div>
+        </section>
+        
+        <section class="results-section">
+            <div class="container">
+                <div id="loadingIndicator" class="hidden">加载中...</div>
+                <div id="noResults" class="hidden">未找到匹配的结果</div>
+                
+                <div class="results-count">
+                    共找到 <span id="resultsCount">0</span> 条结果
+                </div>
+                
+                <div id="searchResults"></div>
+                
+                <div class="pagination">
+                    <button id="prevPage" disabled>上一页</button>
+                    <span id="pageInfo">第 1 页，共 1 页</span>
+                    <button id="nextPage" disabled>下一页</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="data-info">
+            <div class="container">
+                <h3>数据库信息</h3>
+                <div class="data-stats">
+                    <div class="stat-item">
+                        <h4>FANUC</h4>
+                        <p>报警代码: <span id="fanuc-alarm-count">0</span> 条</p>
+                        <p>系统变量: <span id="fanuc-variable-count">0</span> 条</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>KUKA</h4>
+                        <p>报警代码: <span id="kuka-alarm-count">0</span> 条</p>
+                        <p>系统变量: <span id="kuka-variable-count">0</span> 条</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>ABB</h4>
+                        <p>报警代码: <span id="abb-alarm-count">0</span> 条</p>
+                        <p>系统变量: <span id="abb-variable-count">0</span> 条</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Yaskawa</h4>
+                        <p>报警代码: <span id="yaskawa-alarm-count">0</span> 条</p>
+                        <p>系统变量: <span id="yaskawa-variable-count">0</span> 条</p>
+                    </div>
+                </div>
+                <div class="update-info">
+                    <p>最后更新时间: <span id="lastUpdate">--</span></p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 工业机器人查询助手 - 由开发者维护</p>
+        </div>
+    </footer>
+    
+    <script src="app.js"></script>
+</body>
+</html>

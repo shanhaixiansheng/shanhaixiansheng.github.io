@@ -1,0 +1,43 @@
+{
+  "brand": "KUKA",
+  "type": "variable",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "number": "$IN[1]",
+      "name": "数字输入1",
+      "description": "数字输入信号1",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$OUT[1]",
+      "name": "数字输出1",
+      "description": "数字输出信号1",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "$AXIS_ACT[1]",
+      "name": "轴1实际位置",
+      "description": "轴1的当前实际位置",
+      "dataType": "数值",
+      "range": "0~360",
+      "unit": "度",
+      "category": "位置信息"
+    },
+    {
+      "number": "$AXIS_ACT[2]",
+      "name": "轴2实际位置",
+      "description": "轴2的当前实际位置",
+      "dataType": "数值",
+      "range": "0~360",
+      "unit": "度",
+      "category": "位置信息"
+    }
+  ]
+}

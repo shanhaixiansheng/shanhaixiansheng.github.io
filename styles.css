@@ -1,0 +1,342 @@
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 页头 */
+header {
+    background: linear-gradient(135deg, #2c3e50, #4a6491);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* 搜索区域 */
+.search-section {
+    background-color: white;
+    padding: 2rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    background: #f1f1f1;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: #3498db;
+    color: white;
+}
+
+.tab-btn:hover {
+    background: #2980b9;
+    color: white;
+}
+
+.brand-selector {
+    margin-bottom: 1.5rem;
+}
+
+.brand-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.brand-selector select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 200px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+#searchInput {
+    flex: 1;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+#searchBtn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+#searchBtn:hover {
+    background: #2980b9;
+}
+
+.search-options {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.search-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* 结果区域 */
+.results-section {
+    margin-bottom: 2rem;
+}
+
+.results-count {
+    margin: 1rem 0;
+    font-weight: bold;
+}
+
+#loadingIndicator, #noResults {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.hidden {
+    display: none;
+}
+
+#searchResults {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.result-item {
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-code {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-description {
+    margin-bottom: 0.5rem;
+}
+
+.result-details {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.result-detail-item {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.result-detail-item strong {
+    color: #2c3e50;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination button:not(:disabled):hover {
+    background: #e1e1e1;
+}
+
+/* 数据统计区域 */
+.data-info {
+    background: white;
+    padding: 2rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.data-info h3 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.data-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-item {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.stat-item h4 {
+    margin-bottom: 0.5rem;
+    color: #3498db;
+}
+
+.stat-item p {
+    margin: 0.3rem 0;
+}
+
+.update-info {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 页脚 */
+footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    .search-box {
+        flex-direction: column;
+    }
+    
+    .search-options {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .data-stats {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .result-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* 动画效果 */
+.result-item {
+    transition: background-color 0.2s ease;
+}
+
+.result-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* 无结果页面样式 */
+.no-results {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #95a5a6;
+}
+
+.no-results-text {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+}
+
+/* 加载动画 */
+.loading-spinner {
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

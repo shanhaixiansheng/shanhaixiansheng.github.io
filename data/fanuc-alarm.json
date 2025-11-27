@@ -1,0 +1,167 @@
+{
+  "brand": "FANUC",
+  "type": "alarm",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "code": "SRVO-001",
+      "name": "操作面板紧急停止",
+      "description": "操作面板的紧急停止按钮被按下",
+      "category": "急停报警",
+      "level": "严重",
+      "solution": "检查并释放紧急停止按钮"
+    },
+    {
+      "code": "SRVO-002",
+      "name": "外部紧急停止",
+      "description": "外部设备紧急停止信号输入",
+      "category": "急停报警",
+      "level": "严重",
+      "solution": "检查外部紧急停止信号"
+    },
+    {
+      "code": "SRVO-003",
+      "name": "其他紧急停止",
+      "description": "非操作面板和外部紧急停止的其他急停信号",
+      "category": "急停报警",
+      "level": "严重",
+      "solution": "检查控制系统状态"
+    },
+    {
+      "code": "SRVO-004",
+      "name": "伺服放大器过热",
+      "description": "伺服放大器温度超过设定值",
+      "category": "伺服报警",
+      "level": "中等",
+      "solution": "检查散热风扇和环境温度，等待冷却"
+    },
+    {
+      "code": "SRVO-005",
+      "name": "伺服放大器过电流",
+      "description": "伺服放大器电流超过限制值",
+      "category": "伺服报警",
+      "level": "严重",
+      "solution": "检查机械负载是否过大，检查电机接线"
+    },
+    {
+      "code": "SRVO-006",
+      "name": "伺服放大器过电压",
+      "description": "伺服放大器电压异常升高",
+      "category": "伺服报警",
+      "level": "严重",
+      "solution": "检查电源电压是否稳定"
+    },
+    {
+      "code": "SRVO-007",
+      "name": "伺服放大器欠电压",
+      "description": "伺服放大器电压低于正常值",
+      "category": "伺服报警",
+      "level": "严重",
+      "solution": "检查电源电压和接线"
+    },
+    {
+      "code": "SRVO-010",
+      "name": "参数异常",
+      "description": "控制系统参数设置不正确",
+      "category": "参数报警",
+      "level": "中等",
+      "solution": "检查并修正参数设置"
+    },
+    {
+      "code": "SRVO-011",
+      "name": "位置检测器异常",
+      "description": "编码器或位置检测系统故障",
+      "category": "硬件报警",
+      "level": "严重",
+      "solution": "检查编码器接线和状态"
+    },
+    {
+      "code": "SRVO-014",
+      "name": "软件限制超限",
+      "description": "机器人运动超出了软件设置的限位范围",
+      "category": "运动报警",
+      "level": "中等",
+      "solution": "调整机器人位置或修改软件限位设置"
+    },
+    {
+      "code": "SRVO-019",
+      "name": "原点丢失",
+      "description": "机器人未进行原点校准或原点数据丢失",
+      "category": "参数报警",
+      "level": "中等",
+      "solution": "执行原点校准程序"
+    },
+    {
+      "code": "SRVO-021",
+      "name": "伺服电机过热",
+      "description": "伺服电机温度超过设定值",
+      "category": "伺服报警",
+      "level": "严重",
+      "solution": "检查机械负载，等待电机冷却"
+    },
+    {
+      "code": "SRVO-023",
+      "name": "编码器故障",
+      "description": "编码器信号异常或丢失",
+      "category": "硬件报警",
+      "level": "严重",
+      "solution": "检查编码器接线，必要时更换编码器"
+    },
+    {
+      "code": "SRVO-027",
+      "name": "加减速时间常数过大",
+      "description": "运动加减速时间参数设置不当",
+      "category": "参数报警",
+      "level": "轻微",
+      "solution": "调整加减速时间常数参数"
+    },
+    {
+      "code": "SRVO-030",
+      "name": "碰撞检测",
+      "description": "机器人检测到碰撞",
+      "category": "安全报警",
+      "level": "中等",
+      "solution": "检查机器人工作环境，确认安全后复位"
+    },
+    {
+      "code": "SRVO-033",
+      "name": "机器人负载异常",
+      "description": "机器人检测到负载超过设定值",
+      "category": "负载报警",
+      "level": "中等",
+      "solution": "检查机械负载，调整负载参数"
+    },
+    {
+      "code": "SRVO-038",
+      "name": "控制模式不匹配",
+      "description": "当前控制模式与操作要求不符",
+      "category": "操作报警",
+      "level": "轻微",
+      "solution": "切换到正确的控制模式"
+    },
+    {
+      "code": "SRVO-040",
+      "name": "张力传感器报警",
+      "description": "张力传感器数据异常",
+      "category": "传感器报警",
+      "level": "中等",
+      "solution": "检查张力传感器接线和校准"
+    },
+    {
+      "code": "SRVO-044",
+      "name": "安全速度超出限制",
+      "description": "机器人速度超出安全区域限制",
+      "category": "安全报警",
+      "level": "中等",
+      "solution": "降低机器人运动速度"
+    },
+    {
+      "code": "SRVO-050",
+      "name": "系统参数异常",
+      "description": "控制系统参数丢失或损坏",
+      "category": "系统报警",
+      "level": "严重",
+      "solution": "恢复或重新配置系统参数"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "brand": "Yaskawa",
+  "type": "variable",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "number": "M_IN[1]",
+      "name": "通用输入1",
+      "description": "通用输入信号1",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "M_OUT[1]",
+      "name": "通用输出1",
+      "description": "通用输出信号1",
+      "dataType": "布尔",
+      "range": "0/1",
+      "unit": "",
+      "category": "输入输出"
+    },
+    {
+      "number": "P[1]",
+      "name": "位置变量1",
+      "description": "位置坐标变量1",
+      "dataType": "位置",
+      "range": "机器人工作空间",
+      "unit": "mm",
+      "category": "位置信息"
+    },
+    {
+      "number": "B[1]",
+      "name": "变量1",
+      "description": "通用变量1",
+      "dataType": "数值",
+      "range": "系统定义范围",
+      "unit": "",
+      "category": "寄存器"
+    }
+  ]
+}

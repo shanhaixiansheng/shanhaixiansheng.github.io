@@ -1,0 +1,47 @@
+{
+  "brand": "ABB",
+  "type": "alarm",
+  "lastUpdated": "2025-11-27",
+  "data": [
+    {
+      "code": "50001",
+      "name": "紧急停止",
+      "description": "紧急停止信号被触发",
+      "category": "急停报警",
+      "level": "严重",
+      "solution": "检查并释放紧急停止装置"
+    },
+    {
+      "code": "50002",
+      "name": "安全停止",
+      "description": "安全停止信号被触发",
+      "category": "安全报警",
+      "level": "严重",
+      "solution": "检查安全停止信号源"
+    },
+    {
+      "code": "50011",
+      "name": "驱动器故障",
+      "description": "驱动单元发生故障",
+      "category": "硬件报警",
+      "level": "严重",
+      "solution": "检查驱动器和电机连接"
+    },
+    {
+      "code": "50012",
+      "name": "电机过热",
+      "description": "电机温度过高",
+      "category": "伺服报警",
+      "level": "严重",
+      "solution": "等待电机冷却，检查负载"
+    },
+    {
+      "code": "50013",
+      "name": "编码器故障",
+      "description": "编码器信号异常",
+      "category": "硬件报警",
+      "level": "严重",
+      "solution": "检查编码器和连接线"
+    }
+  ]
+}
