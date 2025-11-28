@@ -52,6 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 页脚管理员登录按钮事件
     adminLoginFooterBtn.addEventListener('click', showAdminLogin);
     
+    // 添加平滑滚动和悬停效果
+    addSmoothInteractions();
+    
     // 初始化页面
     initializePage();
 });
@@ -1202,3 +1205,135 @@ async function pushDataToGitHub(repo, path, data, message) {
         console.error('推送数据到GitHub失败:', error);
     }
 }
+
+// 添加平滑交互效果
+function addSmoothInteractions() {
+    // 添加平滑滚动效果
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // 添加元素进入视口时的动画
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // 观察所有需要动画的元素
+    document.querySelectorAll('.result-item, .comment-item, .stat-item').forEach(item => {
+        observer.observe(item);
+    });
+    
+    // 添加按钮点击涟漪效果
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // 添加输入框聚焦动画
+    document.querySelectorAll('input, textarea, select').forEach(element => {
+        element.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        element.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+}
+
+// 添加页面加载完成后的动画
+window.addEventListener('load', function() {
+    document.body.classList.add('loaded');
+    
+    // 为结果区域添加延迟加载动画
+    setTimeout(() => {
+        document.querySelectorAll('.result-item, .comment-item').forEach((item, index) => {
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }, 300);
+});
+
+// 添加平滑过渡类
+const style = document.createElement('style');
+style.innerHTML = `
+    .animate-in {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .focused {
+        transform: translateY(-2px);
+    }
+    
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        transform: scale(0);
+        animation: ripple-animation 0.6s ease-out;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .loaded .result-item, .loaded .comment-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .loaded header, .loaded .search-section, .loaded .comments-section {
+        animation: slideInFromTop 0.8s ease-out;
+    }
+    
+    @keyframes slideInFromTop {
+        0% { opacity: 0; transform: translateY(-30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);
