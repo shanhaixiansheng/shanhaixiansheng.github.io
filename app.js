@@ -749,30 +749,71 @@ function initCommentEvents() {
 // 实时数据同步机制
 async function syncDataWithGitHub() {
     try {
-        // 从GitHub获取最新的统计数据
+        // 从GitHub Pages获取最新的统计数据
         await fetchStatsFromGitHub();
         
-        // 从GitHub获取最新的评论数据
+        // 从GitHub Pages获取最新的评论数据
         await fetchCommentsFromGitHub();
         
-        // 每5分钟同步一次数据
-        setTimeout(syncDataWithGitHub, 5 * 60 * 1000);
+        // 每3分钟同步一次数据
+        setTimeout(syncDataWithGitHub, 3 * 60 * 1000);
     } catch (error) {
         console.error('数据同步失败:', error);
-        // 如果同步失败，5分钟后重试
-        setTimeout(syncDataWithGitHub, 5 * 60 * 1000);
+        // 如果同步失败，1分钟后重试
+        setTimeout(syncDataWithGitHub, 60 * 1000);
     }
 }
 
-// 从GitHub获取统计数据
+// 从云端获取统计数据
 async function fetchStatsFromGitHub() {
     try {
-        // 首先尝试从GitHub Pages获取
+        // 1. 首先尝试从JSONBin.io获取
+        try {
+            const statsBinId = localStorage.getItem('statsBinId');
+            if (statsBinId) {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${statsBinId}/latest`);
+                if (response.ok) {
+                    const remoteStats = await response.json();
+                    
+                    if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
+                        siteStats = remoteStats;
+                        saveSiteStats();
+                        updatePublicStatsDisplay();
+                        console.log('统计数据已从JSONBin.io同步');
+                        return;
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('从JSONBin.io获取统计数据失败:', error);
+        }
+        
+        // 2. 尝试从MyJSON获取
+        try {
+            const statsJsonUri = localStorage.getItem('statsJsonUri');
+            if (statsJsonUri) {
+                const response = await fetch(statsJsonUri);
+                if (response.ok) {
+                    const remoteStats = await response.json();
+                    
+                    if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
+                        siteStats = remoteStats;
+                        saveSiteStats();
+                        updatePublicStatsDisplay();
+                        console.log('统计数据已从MyJSON同步');
+                        return;
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('从MyJSON获取统计数据失败:', error);
+        }
+        
+        // 3. 尝试从GitHub Pages获取
         let response = await fetch('https://shanhaixiansheng.github.io/robot/stats.json');
         if (response.ok) {
             const remoteStats = await response.json();
             
-            // 如果远程数据更新时间比本地新，则更新本地数据
             if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
                 siteStats = remoteStats;
                 saveSiteStats();
@@ -782,67 +823,81 @@ async function fetchStatsFromGitHub() {
             }
         }
         
-        // 如果GitHub Pages获取失败，尝试从Gist获取
-        const statsGistUrl = localStorage.getItem('statsGistUrl');
-        if (statsGistUrl) {
-            response = await fetch(statsGistUrl);
-            if (response.ok) {
-                const html = await response.text();
-                // 从Gist页面提取JSON数据
-                const match = html.match(/<pre><code class="language-json">(.*?)<\/code><\/pre>/s);
-                if (match) {
-                    const remoteStats = JSON.parse(match[1]);
-                    
-                    if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
-                        siteStats = remoteStats;
-                        saveSiteStats();
-                        updatePublicStatsDisplay();
-                        console.log('统计数据已从GitHub Gist同步');
-                    }
-                }
-            }
-        }
     } catch (error) {
         console.error('获取统计数据失败:', error);
     }
 }
 
-// 从GitHub获取评论数据
+// 从云端获取评论数据
 async function fetchCommentsFromGitHub() {
     try {
-        // 首先尝试从GitHub Pages获取
-        let response = await fetch('https://shanhaixiansheng.github.io/robot/comments.json');
-        let remoteComments = null;
-        
-        if (response.ok) {
-            remoteComments = await response.json();
-            console.log('评论数据已从GitHub Pages同步');
-        } else {
-            // 如果GitHub Pages获取失败，尝试从Gist获取
-            const commentsGistUrl = localStorage.getItem('commentsGistUrl');
-            if (commentsGistUrl) {
-                response = await fetch(commentsGistUrl);
+        // 1. 首先尝试从JSONBin.io获取
+        try {
+            const commentsBinId = localStorage.getItem('commentsBinId');
+            if (commentsBinId) {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${commentsBinId}/latest`);
                 if (response.ok) {
-                    const html = await response.text();
-                    // 从Gist页面提取JSON数据
-                    const match = html.match(/<pre><code class="language-json">(.*?)<\/code><\/pre>/s);
-                    if (match) {
-                        remoteComments = JSON.parse(match[1]);
-                        console.log('评论数据已从GitHub Gist同步');
+                    const remoteComments = await response.json();
+                    
+                    if (remoteComments && remoteComments.length > 0) {
+                        // 合并远程和本地评论（基于ID去重）
+                        const mergedComments = mergeComments(userComments, remoteComments);
+                        if (mergedComments.length > userComments.length) {
+                            userComments = mergedComments;
+                            saveComments();
+                            displayComments();
+                            console.log('评论数据已从JSONBin.io同步');
+                        }
+                        return;
                     }
+                }
+            }
+        } catch (error) {
+            console.log('从JSONBin.io获取评论数据失败:', error);
+        }
+        
+        // 2. 尝试从MyJSON获取
+        try {
+            const commentsJsonUri = localStorage.getItem('commentsJsonUri');
+            if (commentsJsonUri) {
+                const response = await fetch(commentsJsonUri);
+                if (response.ok) {
+                    const remoteComments = await response.json();
+                    
+                    if (remoteComments && remoteComments.length > 0) {
+                        // 合并远程和本地评论（基于ID去重）
+                        const mergedComments = mergeComments(userComments, remoteComments);
+                        if (mergedComments.length > userComments.length) {
+                            userComments = mergedComments;
+                            saveComments();
+                            displayComments();
+                            console.log('评论数据已从MyJSON同步');
+                        }
+                        return;
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('从MyJSON获取评论数据失败:', error);
+        }
+        
+        // 3. 尝试从GitHub Pages获取
+        let response = await fetch('https://shanhaixiansheng.github.io/robot/comments.json');
+        if (response.ok) {
+            const remoteComments = await response.json();
+            
+            if (remoteComments && remoteComments.length > 0) {
+                // 合并远程和本地评论（基于ID去重）
+                const mergedComments = mergeComments(userComments, remoteComments);
+                if (mergedComments.length > userComments.length) {
+                    userComments = mergedComments;
+                    saveComments();
+                    displayComments();
+                    console.log('评论数据已从GitHub Pages同步');
                 }
             }
         }
         
-        if (remoteComments) {
-            // 合并远程和本地评论（基于ID去重）
-            const mergedComments = mergeComments(userComments, remoteComments);
-            if (mergedComments.length > userComments.length) {
-                userComments = mergedComments;
-                saveComments();
-                displayComments();
-            }
-        }
     } catch (error) {
         console.error('获取评论数据失败:', error);
     }
@@ -863,55 +918,150 @@ function mergeComments(localComments, remoteComments) {
     return merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 }
 
-// 提交数据到GitHub（通过GitHub Gist API实现简单数据存储）
+// 提交数据到云端存储
 async function submitDataToGitHub(data, dataType) {
     try {
-        // 使用GitHub Gist API作为临时数据存储方案
-        const gistData = {
-            description: `Robot Assistant ${dataType} - ${new Date().toISOString()}`,
-            public: true,
-            files: {
-                [`${dataType}.json`]: {
-                    content: JSON.stringify(data, null, 2)
-                }
-            }
-        };
-        
-        // 创建一个新的Gist
-        const response = await fetch('https://api.github.com/gists', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(gistData)
-        });
-        
-        if (response.ok) {
-            const gist = await response.json();
-            console.log(`${dataType}数据已提交到GitHub Gist:`, gist.html_url);
-            
-            // 保存Gist URL到本地，用于后续同步
-            if (dataType === 'comments') {
-                localStorage.setItem('commentsGistUrl', gist.html_url);
-            } else if (dataType === 'stats') {
-                localStorage.setItem('statsGistUrl', gist.html_url);
-            }
-            
-            showDataSyncNotification(dataType, true);
-        } else {
-            throw new Error('Failed to create Gist');
-        }
-    } catch (error) {
-        console.error('提交数据到GitHub失败:', error);
-        
-        // 如果API调用失败，回退到本地存储方案
+        // 保存数据到本地
         if (dataType === 'comments') {
             saveComments();
         } else if (dataType === 'stats') {
             saveSiteStats();
         }
         
+        // 尝试使用JSONBin.io作为云端存储
+        try {
+            await submitToJSONBin(data, dataType);
+            return;
+        } catch (error) {
+            console.log('JSONBin.io提交失败:', error);
+        }
+        
+        // 尝试使用MyJSON作为备用方案
+        try {
+            await submitToMyJSON(data, dataType);
+            return;
+        } catch (error) {
+            console.log('MyJSON提交失败:', error);
+        }
+        
+        // 最后的备用方案：使用GitHub Issues API
+        try {
+            await submitToGitHubIssues(data, dataType);
+        } catch (error) {
+            console.error('所有数据提交方案都失败:', error);
+            showDataSyncNotification(dataType, false);
+        }
+        
+    } catch (error) {
+        console.error('提交数据到云端失败:', error);
         showDataSyncNotification(dataType, false);
+    }
+}
+
+// 提交数据到JSONBin.io
+async function submitToJSONBin(data, dataType) {
+    const jsonData = JSON.stringify(data, null, 2);
+    
+    // 创建一个新的JSON Bin
+    const response = await fetch('https://api.jsonbin.io/v3/b', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': '$2a$10$yourkeyhere', // 这是一个示例密钥，需要替换为实际密钥
+        },
+        body: jsonData
+    });
+    
+    if (response.ok) {
+        const result = await response.json();
+        console.log(`${dataType}数据已提交到JSONBin.io:`, result);
+        
+        // 保存Bin ID到本地，用于后续同步
+        if (dataType === 'comments') {
+            localStorage.setItem('commentsBinId', result.id);
+        } else if (dataType === 'stats') {
+            localStorage.setItem('statsBinId', result.id);
+        }
+        
+        showDataSyncNotification(dataType, true);
+    } else {
+        throw new Error('Failed to create JSONBin');
+    }
+}
+
+// 提交数据到MyJSON
+async function submitToMyJSON(data, dataType) {
+    const jsonData = JSON.stringify(data, null, 2);
+    
+    // 创建一个新的JSON文档
+    const response = await fetch('https://api.myjson.com/bins', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: jsonData
+    });
+    
+    if (response.ok) {
+        const result = await response.json();
+        console.log(`${dataType}数据已提交到MyJSON:`, result);
+        
+        // 保存URI到本地，用于后续同步
+        if (dataType === 'comments') {
+            localStorage.setItem('commentsJsonUri', result.uri);
+        } else if (dataType === 'stats') {
+            localStorage.setItem('statsJsonUri', result.uri);
+        }
+        
+        showDataSyncNotification(dataType, true);
+    } else {
+        throw new Error('Failed to create MyJSON');
+    }
+}
+
+// 使用GitHub Issues API作为数据存储的最后备用方案
+async function submitToGitHubIssues(data, dataType) {
+    try {
+        // 创建一个包含数据的Issue，用作简单的数据存储
+        const issueTitle = `Data Sync: ${dataType} - ${new Date().toISOString()}`;
+        const issueBody = `
+### ${dataType} Data Update
+
+更新时间: ${new Date().toISOString()}
+
+\`\`\`json
+${JSON.stringify(data, null, 2)}
+\`\`\`
+        `;
+        
+        // 使用GitHub Issues API创建Issue（需要用户手动创建GitHub Personal Access Token）
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const githubUrl = 'https://api.github.com/repos/shanhaixiansheng/robot/issues';
+        
+        const issueData = {
+            title: issueTitle,
+            body: issueBody,
+            labels: [dataType, 'data-sync']
+        };
+        
+        const response = await fetch(proxyUrl + githubUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(issueData)
+        });
+        
+        if (response.ok || response.status === 201) {
+            console.log(`${dataType}数据已作为Issue提交到GitHub`);
+            showDataSyncNotification(dataType, true);
+        } else {
+            throw new Error('Failed to create Issue');
+        }
+    } catch (error) {
+        console.error('提交到GitHub Issues失败:', error);
+        throw error;
     }
 }
 
@@ -949,8 +1099,8 @@ function showDataSyncNotification(dataType, success) {
     } else {
         notification.style.backgroundColor = 'rgba(255, 152, 0, 0.95)';
         notification.innerHTML = `
-            <p>⚠️ 数据已暂存到本地，正在尝试同步到云端...</p>
-            <p>如果您是管理员，请检查GitHub API配置。</p>
+            <p>⚠️ 数据已暂存到本地，正在尝试自动同步...</p>
+            <p>如果同步失败，数据将保存在本地存储中，下次尝试时会自动同步。</p>
             <button class="close-notification">关闭</button>
         `;
     }
@@ -961,12 +1111,12 @@ function showDataSyncNotification(dataType, success) {
         notification.remove();
     });
     
-    // 3秒后自动关闭
+    // 5秒后自动关闭
     setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
-    }, 3000);
+    }, 5000);
 }
 
 // 从GitHub获取数据
