@@ -75,7 +75,13 @@ async function initializePage() {
     
     // 初始化评论功能
     loadComments();
+    displayComments();
     initCommentEvents();
+    
+    // 获取用户位置
+    getUserLocation().then(location => {
+        console.log('用户位置:', location);
+    });
     
     // 启动数据同步机制
     syncDataWithGitHub();
@@ -269,9 +275,6 @@ function displayResults() {
         moreInfo.textContent = `模糊搜索找到 ${searchResult.length} 条结果，仅显示前 ${maxResults} 条。请使用更精确的关键词查找更多信息。`;
         resultsContainer.appendChild(moreInfo);
     }
-    
-    // 显示评论区域
-    showCommentsSection();
 }
 
 // 清空结果
@@ -443,7 +446,7 @@ const badWords = [
     '滚', '去死', '死妈', '死全家', '尼玛', '你妈', '你M', 'M的',
     'CAO', 'cao', 'FUCK', 'fuck', 'SHIT', 'shit', 'BITCH', 'bitch', 'ASS', 'ass',
     '操你', '草你', '肏你', '狗日的', '狗屎', '屄', '逼', 'B', 'b',
-    '鸡巴', 'JB', 'jb', '屌', '阴道', '淫荡', '淫秽', '色情'
+    '鸡巴', 'JB', 'jb', '屌', '阴道', '淫荡', '淫秽', '色情','qnmd'
 ];
 
 // 检查脏话
@@ -538,8 +541,24 @@ function saveSiteStats() {
 
 // 更新公共统计显示
 function updatePublicStatsDisplay() {
+    const runningDays = getRunningDays();
     document.getElementById('publicViewCount').textContent = siteStats.totalViews || '--';
     document.getElementById('todayViewCount').textContent = siteStats.todayViews || '--';
+    document.getElementById('siteRunningDays').textContent = runningDays;
+    document.getElementById('headerRunningDays').textContent = runningDays;
+}
+
+// 计算网站运行天数
+function getRunningDays() {
+    // 网站上线日期 (2025-11-20)
+    const startDate = new Date('2025-11-20');
+    const currentDate = new Date();
+    
+    // 计算日期差异
+    const timeDiff = currentDate - startDate;
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    
+    return daysDiff;
 }
 
 // 增加浏览量
@@ -563,17 +582,7 @@ function saveComments() {
     localStorage.setItem('robotAssistantComments', JSON.stringify(userComments));
 }
 
-// 显示评论区域
-function showCommentsSection() {
-    document.getElementById('commentsSection').classList.remove('hidden');
-    loadComments();
-    displayComments();
-    
-    // 获取用户位置
-    getUserLocation().then(location => {
-        console.log('用户位置:', location);
-    });
-}
+
 
 // 显示评论列表
 function displayComments() {

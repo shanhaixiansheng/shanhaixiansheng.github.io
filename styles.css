@@ -24,6 +24,7 @@ header {
     color: white;
     padding: 2rem 0;
     text-align: center;
+    position: relative;
 }
 
 header h1 {
@@ -48,6 +49,19 @@ header p {
     0% { opacity: 0.7; }
     50% { opacity: 1; }
     100% { opacity: 0.7; }
+}
+
+/* 网站运行天数显示 */
+.site-running-days {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* 搜索区域 */
@@ -635,6 +649,10 @@ footer {
     margin-bottom: 1rem;
     font-weight: bold;
     color: #3498db;
+}
+
+.site-stats-public p {
+    margin: 0.5rem 0;
 }
 
 /* 脏话识别警告 */
