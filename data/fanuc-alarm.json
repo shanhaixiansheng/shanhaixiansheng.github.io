@@ -1,14 +1,14 @@
 {
   "brand": "FANUC",
   "type": "alarm",
-  "lastUpdated": "2025-11-27",
+  "lastUpdated": "2025-11-28",
   "data": [
     {
       "code": "SRVO-021",
       "name": "该报警表示伺服电机负载超过了允许范围。",
       "description": "该报警表示伺服电机负载超过了允许范围。",
       "category": "伺服报警",
-      "level": "中等",
+      "level": "严重",
       "solution": "检查伺服电机是否有机械阻力，确保电机负载在允许范围内。"
     },
     {
@@ -24,8 +24,16 @@
       "name": "外部急停按钮被按下或急停回路断开",
       "description": "外部急停按钮被按下或急停回路断开",
       "category": "接口报警",
-      "level": "严重",
+      "level": "中等",
       "solution": "检查急停按钮和急停回路，确保其连接正常"
+    },
+    {
+      "code": "一、伺服系统报警 (SRVO-)",
+      "name": "",
+      "description": "",
+      "category": "伺服报警",
+      "level": "中等",
+      "solution": "请参考FANUC技术手册获取详细解决方案"
     },
     {
       "code": "SRVO-001",
@@ -80,7 +88,7 @@
       "name": "制动器保险丝熔断",
       "description": "制动器保险丝熔断",
       "category": "伺服报警",
-      "level": "严重",
+      "level": "中等",
       "solution": "1. 更换紧急制动控制印刷电路板上的保险丝\n2. 检查紧急制动控制印刷电路板上的 LED (FALM)"
     },
     {
@@ -112,7 +120,7 @@
       "name": "电源故障恢复",
       "description": "电源故障恢复",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 这是正常电源启动 (热启动) 的提示\n2. 无需特殊操作\n3. 确认系统正常启动即可"
     },
     {
@@ -136,7 +144,7 @@
       "name": "系统过热",
       "description": "系统过热",
       "category": "伺服报警",
-      "level": "严重",
+      "level": "中等",
       "solution": "1. 改善控制柜通风条件，确保环境温度低于 45°C\n2. 检查冷却风扇工作状态\n3. 清理控制柜内部灰尘\n4. 检查印刷电路板底板上的自动调温器"
     },
     {
@@ -200,7 +208,7 @@
       "name": "运动数据溢出",
       "description": "运动数据溢出",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 执行冷启动：关闭机器人，同时按住 SHIFT 和 RESET 键开启\n2. 如错误仍未清除，记录引发错误的事件\n3. 联系 FANUC 技术支持"
     },
     {
@@ -248,7 +256,7 @@
       "name": "简易零点标定参考轴未设置",
       "description": "简易零点标定参考轴未设置",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 设定简易零点标定的参考点\n2. 未设定参考点时不能进行简易零点标定\n3. 确认参考轴设置正确"
     },
     {
@@ -256,7 +264,7 @@
       "name": "IMSTP 输入 (组:i)",
       "description": "IMSTP 输入 (组:i)",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 接通外围设备 I/O 的 * IMSTP 信号\n2. 如有接 UI (1) 信号线，确保 UI (1) 为 ON\n3. 未接线时，将 UI (1) 分配为 UI1-1135-1-1\n4. 可将系统配置中的 \"专用外部信号\" 设置为 \"禁用\""
     },
     {
@@ -264,7 +272,7 @@
       "name": "脉冲计数不匹配",
       "description": "脉冲计数不匹配",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 进入 Master/Cal 界面 (MENU→0→System→Type→Master/Cal)\n2. 按 F3 RES PCA 复位脉冲报警\n3. 将变量 $MASTER_DONE 改为 TRUE\n4. 执行 CALIBRATE 重新校准"
     },
     {
@@ -288,7 +296,7 @@
       "name": "BLAL 报警 (组:i 轴:j)",
       "description": "BLAL 报警 (组:i 轴:j)",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 及时更换脉冲编码器电池\n2. 避免电池完全耗尽导致数据丢失\n3. 更换电池后执行必要的校准"
     },
     {
@@ -296,7 +304,7 @@
       "name": "脉冲编码器位置未确定",
       "description": "脉冲编码器位置未确定",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 将坐标系切换到关节坐标系\n2. 逐个点动 6 个轴，每个轴来回旋转 20 度左右\n3. 完成后报警自动消除"
     },
     {
@@ -328,7 +336,7 @@
       "name": "T1/T2 模式下 TP 关闭",
       "description": "T1/T2 模式下 TP 关闭",
       "category": "伺服报警",
-      "level": "轻微",
+      "level": "中等",
       "solution": "1. 将示教盒开 / 关设置为 \"开\"\n2. 按下重启键\n3. 如重启不起效果，修复硬件线路"
     },
     {
@@ -404,6 +412,14 @@
       "solution": "1. 检查伺服 ON/OFF 信号线路\n2. 确认外部设备是否正确发送伺服 ON 信号\n3. 检查相关 I/O 接线和信号状态"
     },
     {
+      "code": "二、系统报警 (SYST-)",
+      "name": "",
+      "description": "",
+      "category": "系统报警",
+      "level": "中等",
+      "solution": "请参考FANUC技术手册获取详细解决方案"
+    },
+    {
       "code": "SYST-001",
       "name": "主电源异常",
       "description": "主电源异常",
@@ -444,10 +460,18 @@
       "solution": "1. 检查控制柜冷却系统\n2. 确保环境温度在规定范围内\n3. 清理通风口和散热器\n4. 检查温度传感器\n5. 改善控制柜通风条件"
     },
     {
+      "code": "三、程序相关报警 (PROG-, INTP-, TPIF-)",
+      "name": "",
+      "description": "",
+      "category": "接口报警",
+      "level": "中等",
+      "solution": "请参考FANUC技术手册获取详细解决方案"
+    },
+    {
       "code": "PROG-001",
       "name": "程序未找到",
       "description": "程序未找到",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序调用指令中的程序名是否正确\n2. 确认程序是否存在于指定存储位置\n3. 如程序丢失，从备份恢复\n4. 检查程序存储路径设置"
     },
@@ -455,7 +479,7 @@
       "code": "PROG-002",
       "name": "ABORT.L 指定的任务名无效",
       "description": "ABORT.L 指定的任务名无效",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查任务名设置是否正确\n2. 确认任务是否存在\n3. 修正任务名参数\n4. 检查程序语法"
     },
@@ -463,7 +487,7 @@
       "code": "PROG-003",
       "name": "ABORT.L 指定的程序名无效",
       "description": "ABORT.L 指定的程序名无效",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序名拼写是否正确\n2. 确认程序是否存在\n3. 修正程序名参数\n4. 检查程序调用格式"
     },
@@ -471,7 +495,7 @@
       "code": "PROG-004",
       "name": "ABORT.L 指定的等待类型无效",
       "description": "ABORT.L 指定的等待类型无效",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查等待类型设置是否正确\n2. 确认等待时间在允许范围内\n3. 修正等待类型参数\n4. 参考编程手册的正确格式"
     },
@@ -479,7 +503,7 @@
       "code": "PROG-005",
       "name": "指定的程序未找到",
       "description": "指定的程序未找到",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序名拼写是否正确\n2. 确认程序是否被删除或移动\n3. 检查程序号范围是否正确\n4. 从备份恢复程序"
     },
@@ -487,7 +511,7 @@
       "code": "PROG-006",
       "name": "指定的行未找到",
       "description": "指定的行未找到",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查行号设置是否正确\n2. 确认行号是否存在\n3. 修正行号参数\n4. 检查程序结构"
     },
@@ -495,7 +519,7 @@
       "code": "PROG-007",
       "name": "程序已在运行",
       "description": "程序已在运行",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序是否已经在运行\n2. 等待程序运行结束\n3. 停止当前运行的程序\n4. 重新启动程序"
     },
@@ -503,7 +527,7 @@
       "code": "PROG-008",
       "name": "子程序中不能执行",
       "description": "子程序中不能执行",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序执行环境\n2. 确认是否在子程序中执行了不允许的指令\n3. 修改程序结构\n4. 将指令移到主程序中执行"
     },
@@ -511,7 +535,7 @@
       "code": "PROG-009",
       "name": "继续执行点与暂停点不同",
       "description": "继续执行点与暂停点不同",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查执行点和暂停点设置\n2. 确认行号设置正确\n3. 重新设置继续执行点\n4. 检查程序执行状态"
     },
@@ -519,7 +543,7 @@
       "code": "PROG-010",
       "name": "与暂停时的程序不同",
       "description": "与暂停时的程序不同",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序名设置\n2. 确认程序版本一致性\n3. 重新选择正确的程序\n4. 检查程序修改记录"
     },
@@ -527,7 +551,7 @@
       "code": "PROG-011",
       "name": "PAUSE.L 没有控制动作的权力",
       "description": "PAUSE.L 没有控制动作的权力",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查控制动作设置\n2. 确认权限设置正确\n3. 修改控制动作参数\n4. 检查用户权限"
     },
@@ -535,7 +559,7 @@
       "code": "PROG-012",
       "name": "重新启动的动作不同",
       "description": "重新启动的动作不同",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查动作设置是否正确\n2. 确认动作是否存在\n3. 修正动作参数\n4. 检查程序重启逻辑"
     },
@@ -543,7 +567,7 @@
       "code": "PROG-013",
       "name": "动作被程序指令停止",
       "description": "动作被程序指令停止",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序指令设置\n2. 确认停止指令的条件\n3. 修改程序逻辑\n4. 检查外部信号状态"
     },
@@ -551,7 +575,7 @@
       "code": "PROG-014",
       "name": "运行中的程序过多",
       "description": "运行中的程序过多",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查同时运行的程序数量\n2. 停止不必要的程序\n3. 调整程序执行优先级\n4. 检查系统资源配置"
     },
@@ -559,7 +583,7 @@
       "code": "PROG-015",
       "name": "无法后退执行",
       "description": "无法后退执行",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查程序执行模式\n2. 确认是否支持后退执行\n3. 修改程序执行方式\n4. 重新启动程序"
     },
@@ -567,7 +591,7 @@
       "code": "PROG-016",
       "name": "任务未找到",
       "description": "任务未找到",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查任务名设置\n2. 确认任务是否存在\n3. 修正任务名参数\n4. 检查任务配置"
     },
@@ -575,7 +599,7 @@
       "code": "PROG-017",
       "name": "任务未运行",
       "description": "任务未运行",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查任务运行状态\n2. 启动指定的任务\n3. 检查任务启动条件\n4. 修正任务参数"
     },
@@ -583,7 +607,7 @@
       "code": "PROG-018",
       "name": "动作堆栈溢出",
       "description": "动作堆栈溢出",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查动作堆栈设置\n2. 减少嵌套调用层数\n3. 优化程序结构\n4. 增加堆栈大小配置"
     },
@@ -591,7 +615,7 @@
       "code": "PROG-019",
       "name": "暂停程序的请求被忽略",
       "description": "暂停程序的请求被忽略",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查暂停请求的时机\n2. 确认程序处于可暂停状态\n3. 修改暂停请求逻辑\n4. 检查系统响应状态"
     },
@@ -599,7 +623,7 @@
       "code": "PROG-020",
       "name": "任务已中止",
       "description": "任务已中止",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查任务中止原因\n2. 重新启动任务\n3. 修正导致中止的错误\n4. 检查任务执行条件"
     },
@@ -607,7 +631,7 @@
       "code": "PROG-021",
       "name": "中止程序的请求被忽略",
       "description": "中止程序的请求被忽略",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查中止请求的时机\n2. 确认程序处于可中止状态\n3. 修改中止请求逻辑\n4. 强制停止程序"
     },
@@ -615,7 +639,7 @@
       "code": "PROG-022",
       "name": "请求类型无效",
       "description": "请求类型无效",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查请求类型设置\n2. 确认请求类型存在\n3. 修正请求类型参数\n4. 参考系统手册的正确格式"
     },
@@ -623,7 +647,7 @@
       "code": "PROG-023",
       "name": "任务未暂停",
       "description": "任务未暂停",
-      "category": "其他报警",
+      "category": "程序报警",
       "level": "中等",
       "solution": "1. 检查任务暂停状态\n2. 暂停指定的任务\n3. 检查暂停条件\n4. 修正暂停参数"
     },
@@ -655,7 +679,7 @@
       "code": "TPIF-001",
       "name": "ABORT.L 指定的指针无效",
       "description": "ABORT.L 指定的指针无效",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查 PROG 程序中的指针设置\n2. 确保指针指向有效的内存地址\n3. 修正指针参数\n4. 检查内存分配"
     },
@@ -663,7 +687,7 @@
       "code": "TPIF-002",
       "name": "ABORT.L 指定的任务名无效",
       "description": "ABORT.L 指定的任务名无效",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查任务名设置是否正确\n2. 确认任务是否存在\n3. 修正任务名参数\n4. 检查任务管理配置"
     },
@@ -671,7 +695,7 @@
       "code": "TPIF-003",
       "name": "ABORT.L 指定的程序名无效",
       "description": "ABORT.L 指定的程序名无效",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序名拼写是否正确\n2. 确认程序是否存在\n3. 修正程序名参数\n4. 检查程序管理配置"
     },
@@ -679,7 +703,7 @@
       "code": "TPIF-004",
       "name": "ABORT.L 指定的等待类型无效",
       "description": "ABORT.L 指定的等待类型无效",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查等待类型设置\n2. 确认等待类型被支持\n3. 修正等待类型参数\n4. 参考系统支持的等待类型"
     },
@@ -687,7 +711,7 @@
       "code": "TPIF-005",
       "name": "指定的程序未找到",
       "description": "指定的程序未找到",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序名是否正确\n2. 确认程序是否存在\n3. 从备份恢复程序\n4. 检查程序存储位置"
     },
@@ -695,7 +719,7 @@
       "code": "TPIF-006",
       "name": "指定的行未找到",
       "description": "指定的行未找到",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查行号是否正确\n2. 确认行号存在\n3. 修正行号参数\n4. 检查程序结构"
     },
@@ -703,7 +727,7 @@
       "code": "TPIF-007",
       "name": "程序已在运行",
       "description": "程序已在运行",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序运行状态\n2. 等待程序结束或停止程序\n3. 重新执行程序\n4. 检查程序调度"
     },
@@ -711,7 +735,7 @@
       "code": "TPIF-008",
       "name": "子程序中不能执行",
       "description": "子程序中不能执行",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序执行环境\n2. 修改程序结构\n3. 将指令移到合适的位置\n4. 检查子程序限制"
     },
@@ -719,7 +743,7 @@
       "code": "TPIF-009",
       "name": "继续执行点与暂停点不同",
       "description": "继续执行点与暂停点不同",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查执行点设置\n2. 重新设置继续执行点\n3. 检查程序暂停和恢复逻辑\n4. 修正执行点参数"
     },
@@ -727,7 +751,7 @@
       "code": "TPIF-010",
       "name": "与暂停时的程序不同",
       "description": "与暂停时的程序不同",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序一致性\n2. 重新选择正确的程序\n3. 检查程序修改历史\n4. 从备份恢复程序"
     },
@@ -735,7 +759,7 @@
       "code": "TPIF-011",
       "name": "PAUSE.L 没有控制动作的权力",
       "description": "PAUSE.L 没有控制动作的权力",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查控制权限设置\n2. 确认用户权限\n3. 修改权限配置\n4. 检查系统安全设置"
     },
@@ -743,7 +767,7 @@
       "code": "TPIF-012",
       "name": "重新启动的动作不同",
       "description": "重新启动的动作不同",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查动作设置\n2. 确认动作一致性\n3. 修正动作参数\n4. 检查程序重启逻辑"
     },
@@ -751,7 +775,7 @@
       "code": "TPIF-013",
       "name": "动作被程序指令停止",
       "description": "动作被程序指令停止",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查停止指令\n2. 确认停止条件\n3. 修改程序逻辑\n4. 检查外部信号"
     },
@@ -759,7 +783,7 @@
       "code": "TPIF-014",
       "name": "运行中的程序过多",
       "description": "运行中的程序过多",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序数量限制\n2. 优化程序执行\n3. 增加系统资源\n4. 调整程序优先级"
     },
@@ -767,7 +791,7 @@
       "code": "TPIF-015",
       "name": "无法后退执行",
       "description": "无法后退执行",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查程序类型\n2. 确认是否支持后退\n3. 修改程序执行方式\n4. 重新启动程序"
     },
@@ -775,7 +799,7 @@
       "code": "TPIF-016",
       "name": "任务未找到",
       "description": "任务未找到",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查任务配置\n2. 确认任务存在\n3. 创建或恢复任务\n4. 检查任务管理"
     },
@@ -783,7 +807,7 @@
       "code": "TPIF-017",
       "name": "任务未运行",
       "description": "任务未运行",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查任务状态\n2. 启动任务\n3. 检查任务启动条件\n4. 修正任务参数"
     },
@@ -791,15 +815,47 @@
       "code": "TPIF-018",
       "name": "动作堆栈溢出",
       "description": "动作堆栈溢出",
-      "category": "其他报警",
+      "category": "接口报警",
       "level": "中等",
       "solution": "1. 检查堆栈配置\n2. 优化程序结构\n3. 增加堆栈大小\n4. 减少嵌套深度"
+    },
+    {
+      "code": "四、I/O 相关报警 (I/O-, PRIO-)",
+      "name": "",
+      "description": "",
+      "category": "I/O报警",
+      "level": "中等",
+      "solution": "请参考FANUC技术手册获取详细解决方案"
+    },
+    {
+      "code": "代码名称",
+      "name": "报警代码注释",
+      "description": "报警代码注释",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "解决方案"
+    },
+    {
+      "code": "I/O-010",
+      "name": "外部急停",
+      "description": "外部急停",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "1. 检查外部急停按钮是否被按下并复位\n2. 检查急停信号电缆连接及线路通断\n3. 确认外部设备急停回路正常\n4. 检查急停信号输入状态"
+    },
+    {
+      "code": "I/O-020",
+      "name": "安全门信号异常",
+      "description": "安全门信号异常",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "1. 检查安全门是否正确关闭并锁紧\n2. 检查安全门信号线连接\n3. 测试安全门锁开关功能\n4. 检查安全继电器状态"
     },
     {
       "code": "PRIO-001",
       "name": "非法的端口类型代码",
       "description": "非法的端口类型代码",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 使用 IOSETUP.KL 中定义的端口类型\n2. 检查端口类型设置\n3. 修正端口类型参数\n4. 参考 I/O 配置手册"
     },
@@ -807,7 +863,7 @@
       "code": "PRIO-002",
       "name": "非法的端口号码",
       "description": "非法的端口号码",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 指定正确的端口号码\n2. 确认端口号码已分配\n3. 检查端口配置\n4. 修正端口号码参数"
     },
@@ -815,23 +871,23 @@
       "code": "PRIO-003",
       "name": "系统剩余内存不足",
       "description": "系统剩余内存不足",
-      "category": "其他报警",
-      "level": "轻微",
+      "category": "I/O报警",
+      "level": "中等",
       "solution": "1. 删除不必要的 KAREL 程序或变量\n2. 清理临时文件\n3. 考虑系统内存升级\n4. 优化内存使用"
     },
     {
       "code": "PRIO-004",
       "name": "模块的端口数不足",
       "description": "模块的端口数不足",
-      "category": "其他报警",
-      "level": "轻微",
+      "category": "I/O报警",
+      "level": "中等",
       "solution": "1. 更改开始点编号\n2. 更改 I/O 的数量值\n3. 增加 I/O 模块\n4. 重新配置 I/O 分配"
     },
     {
       "code": "PRIO-005",
       "name": "不正确的端口编号",
       "description": "不正确的端口编号",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 修改 I/O 编号的指定\n2. 确保编号在 1~32767 范围内\n3. 检查 I/O 配置\n4. 修正端口编号"
     },
@@ -839,7 +895,7 @@
       "code": "PRIO-006",
       "name": "不正确的端口编号",
       "description": "不正确的端口编号",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 修改 I/O 编号的指定\n2. 确保编号在有效范围内\n3. 检查 I/O 分配表\n4. 重新配置 I/O"
     },
@@ -847,7 +903,7 @@
       "code": "PRIO-007",
       "name": "编号与 SET_PORT_ASG 不匹配",
       "description": "编号与 SET_PORT_ASG 不匹配",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 修改 I/O 编号的指定\n2. 确认端口已分配\n3. 检查 I/O 配置历史\n4. 重新分配端口"
     },
@@ -855,7 +911,7 @@
       "code": "PRIO-008",
       "name": "找不到物理端口",
       "description": "找不到物理端口",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 使用正确的机架编号、插槽编号和信号编号\n2. 检查 I/O 模块安装\n3. 确认物理端口存在\n4. 重新配置 I/O 地址"
     },
@@ -863,7 +919,7 @@
       "code": "PRIO-009",
       "name": "端口数量无效",
       "description": "端口数量无效",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 指定正确的 I/O 数量 (1~128 范围)\n2. 检查 I/O 模块容量\n3. 修正端口数量参数\n4. 重新配置 I/O"
     },
@@ -871,7 +927,7 @@
       "code": "PRIO-010",
       "name": "不正确的物理端口编号",
       "description": "不正确的物理端口编号",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 指定正确的 I/O 编号 (≥1)\n2. 检查物理端口配置\n3. 修正端口编号\n4. 确认 I/O 模块状态"
     },
@@ -879,7 +935,7 @@
       "code": "PRIO-011",
       "name": "分配与已有编号重复",
       "description": "分配与已有编号重复",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 指定正确的开始点 / 数量\n2. 检查已分配的 I/O 编号\n3. 选择未使用的编号范围\n4. 重新分配 I/O 地址"
     },
@@ -887,7 +943,7 @@
       "code": "PRIO-012",
       "name": "插槽编号错误",
       "description": "插槽编号错误",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 使用正确的机架编号和插槽编号\n2. 确认插槽已使用\n3. 检查 I/O 模块安装位置\n4. 修正插槽编号"
     },
@@ -895,7 +951,7 @@
       "code": "PRIO-013",
       "name": "电路板无模拟输入序列",
       "description": "电路板无模拟输入序列",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 指定正确的机架编号和插槽编号\n2. 确认电路板支持模拟输入\n3. 检查模拟输入配置\n4. 更换支持模拟输入的电路板"
     },
@@ -903,7 +959,7 @@
       "code": "PRIO-014",
       "name": "模拟信号输入分配序列太长",
       "description": "模拟信号输入分配序列太长",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 指定 1~15 范围内的编号\n2. 缩短模拟输入序列\n3. 检查模拟输入配置\n4. 修正序列编号"
     },
@@ -911,7 +967,7 @@
       "code": "PRIO-016",
       "name": "逻辑端口已分配",
       "description": "逻辑端口已分配",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 使用别的逻辑编号\n2. 检查已分配的逻辑端口\n3. 释放或重新分配端口\n4. 修正逻辑编号"
     },
@@ -919,7 +975,7 @@
       "code": "PRIO-017",
       "name": "I/O 点未模拟",
       "description": "I/O 点未模拟",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 将输入信号设定为模拟\n2. 检查模拟信号配置\n3. 重新进行设定\n4. 确认模拟信号支持"
     },
@@ -927,7 +983,7 @@
       "code": "PRIO-018",
       "name": "I/O 系统错误",
       "description": "I/O 系统错误",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 联系 FANUC 官方客服中心\n2. 检查软件版本\n3. 重新启动系统\n4. 检查 I/O 板硬件"
     },
@@ -935,7 +991,7 @@
       "code": "PRIO-020",
       "name": "I/O Link 通讯错误",
       "description": "I/O Link 通讯错误",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 检查 CPU 板与 I/O 装置之间的电缆\n2. 确认主 CPU 板或 I/O 装置上的 SLC2\n3. 检查 I/O 模块电源和连接\n4. 重新启动系统"
     },
@@ -943,9 +999,17 @@
       "code": "PRIO-021",
       "name": "未知的 I/O 装置",
       "description": "未知的 I/O 装置",
-      "category": "其他报警",
+      "category": "I/O报警",
       "level": "中等",
       "solution": "1. 在 I/O Link 画面上设定该 I/O 装置的信号\n2. 检查 I/O 装置配置\n3. 更新 I/O 装置固件\n4. 确认 I/O 装置兼容性"
+    },
+    {
+      "code": "五、安全报警 (SPC-)",
+      "name": "",
+      "description": "",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "请参考FANUC技术手册获取详细解决方案"
     },
     {
       "code": "SPC-014",
@@ -970,6 +1034,262 @@
       "category": "其他报警",
       "level": "严重",
       "solution": "1. 检查所有急停按钮状态\n2. 复位被按下的急停按钮\n3. 检查急停回路完整性\n4. 按下 RESET 键清除报警"
+    },
+    {
+      "code": "ARC-008",
+      "name": "焊接电源异常",
+      "description": "焊接电源异常",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "焊接过程中发现电源故障输入。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-010",
+      "name": "检知熔着",
+      "description": "检知熔着",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "发生熔着。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-011",
+      "name": "熔着解除操作没有执行",
+      "description": "熔着解除操作没有执行",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "发现熔着，未执行熔着解除。熔着解除位可能禁用。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-012",
+      "name": "熔着解除失败",
+      "description": "熔着解除失败",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "发现熔着，自动熔着解除功能未能断开熔着处。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-013",
+      "name": "电弧没有发生",
+      "description": "电弧没有发生",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "起弧过程中，电弧检测输入不稳定。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-014",
+      "name": "请教示盒的开关ON",
+      "description": "请教示盒的开关ON",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "在示教操作盘启用开关设为OFF的情况下，按下焊接启用或焊丝微动键。打开示教盒开关"
+    },
+    {
+      "code": "ARC-015",
+      "name": "请同时按(SHIFT)键",
+      "description": "请同时按(SHIFT)键",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "在未按住SHIFT键的情况下，按下焊接启用或焊丝微动键。按住SHIFT键后再操作"
+    },
+    {
+      "code": "ARC-016",
+      "name": "教示盒设定焊接无效",
+      "description": "教示盒设定焊接无效",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "在示教操作盘禁用焊接功能的情况下，一个正在示教操作盘上执行的程序试图Arc Start。启用示教盒焊接功能"
+    },
+    {
+      "code": "ARC-017",
+      "name": "焊接开始设定无效",
+      "description": "焊接开始设定无效",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "在焊接禁用的情况下执行Arc Start指令。启用焊接功能"
+    },
+    {
+      "code": "ARC-018",
+      "name": "电弧检知信号无法检知",
+      "description": "电弧检知信号无法检知",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "焊接过程中，电弧检测信号丢失。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-019",
+      "name": "电弧检知信号无法收信",
+      "description": "电弧检知信号无法收信",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "无法读取电弧检测输入信号。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-020",
+      "name": "作业领域未设定",
+      "description": "作业领域未设定",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "现有内存不足以安排电弧指令。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-021",
+      "name": "焊接中程式结束",
+      "description": "焊接中程式结束",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "程序在焊接期间中断。检查焊机是否正常运作，或接通焊机电源"
+    },
+    {
+      "code": "ARC-022",
+      "name": "焊接条件是设定范围外",
+      "description": "焊接条件是设定范围外",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "程序模拟输出超出设备限制范围。调整焊接条件参数"
+    },
+    {
+      "code": "ARC-023",
+      "name": "请电弧条件号码修改整数值",
+      "description": "请电弧条件号码修改整数值",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "电弧指令寄存器不是整数型。修改电弧条件号码为整数值"
+    },
+    {
+      "code": "ARC-024",
+      "name": "焊接装置的类比设定幅太狭",
+      "description": "焊接装置的类比设定幅太狭",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "设备最小值到最大值的范围过小。重新输入设备的最小值或最大值"
+    },
+    {
+      "code": "ARC-025",
+      "name": "A/D或D/A换算值的设定幅太狭",
+      "description": "A/D或D/A换算值的设定幅太狭",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "A/D或D/A转换值的设定范围过小。重新调整设定范围"
+    },
+    {
+      "code": "ARC-026",
+      "name": "焊接中类比设定范围改变是无效",
+      "description": "焊接中类比设定范围改变是无效",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "焊接过程中不能改变类比设定范围。停止焊接后再调整设定"
+    },
+    {
+      "code": "ARC-030",
+      "name": "熔着还检知中",
+      "description": "熔着还检知中",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "仍在检测熔着状态。等待熔着检测完成或手动解除"
+    },
+    {
+      "code": "ARC-031",
+      "name": "焊接中没有发生动作",
+      "description": "焊接中没有发生动作",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "焊接过程中机器人没有运动。检查程序和运动指令"
+    },
+    {
+      "code": "ARC-032",
+      "name": "单段动作发生,焊接中断",
+      "description": "单段动作发生,焊接中断",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "焊接开始后进入单段动作，导致焊接停止。如要继续焊接，必须先退出单段动作模式"
+    },
+    {
+      "code": "ARC-033",
+      "name": "焊接作业一定选择Override100%",
+      "description": "焊接作业一定选择Override100%",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "速度倍率小于100%。将速度倍率设为100%，然后再进行焊接，或禁用低速焊接"
+    },
+    {
+      "code": "ARC-034",
+      "name": "现在其他作业是焊接作业中",
+      "description": "现在其他作业是焊接作业中",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "不带焊接控制的任务试图执行Arc Start或Arc End指令。在尝试通过另一项任务进行焊接前，先终止或中断带有焊接控制的任务"
+    },
+    {
+      "code": "ARC-035",
+      "name": "装置号码未设定",
+      "description": "装置号码未设定",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "电弧指令中没有装置号码。请在程序属性数据或电弧指令中设置装置号码"
+    },
+    {
+      "code": "ARC-036",
+      "name": "这个装置的MASK不支援",
+      "description": "这个装置的MASK不支援",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "试图增加或使用的装置数量超过允许范围。请在程序属性数据或电弧指令中设置正确的装置号码"
+    },
+    {
+      "code": "ARC-037",
+      "name": "别的装置执行微调动作中",
+      "description": "别的装置执行微调动作中",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "另一台装置发生焊丝微动现象。等待其他装置微调动作完成"
+    },
+    {
+      "code": "ARC-040",
+      "name": "设备1缺失I/O报警",
+      "description": "设备1缺失I/O报警",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "未检测到指定的焊接I/O信号，或该信号设置不当。在焊接输入/输出屏幕中确认I/O硬件已连接，且信号已分配端口号"
+    },
+    {
+      "code": "ARC-041",
+      "name": "需要装置-NET功能",
+      "description": "需要装置-NET功能",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "系统变量$AWEPRR中的$VENDOR_ID、$DEV_TYPE和$PROD_CODE字段设为非零值，但未安装DeviceNet选项。添加DeviceNet选项，或选择一个不需要DeviceNet的焊接装置型号"
+    },
+    {
+      "code": "ARC-042",
+      "name": "外在的需要消息功能",
+      "description": "外在的需要消息功能",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "系统变量$AWEPRR中的相关字段设为非零值，但未安装Explicit Messaging选项。添加Explicit Messaging选项"
+    },
+    {
+      "code": "ARC-043",
+      "name": "需要装置-NET基板",
+      "description": "需要装置-NET基板",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "系统变量$AWEPRR中的相关字段设为采用DeviceNet，但未检测到DeviceNet硬件。添加DeviceNet硬件"
+    },
+    {
+      "code": "ARC-044",
+      "name": "要设定装置-NET装置",
+      "description": "要设定装置-NET装置",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "系统变量$AWEPRR中的相关字段设为非零值，但未正确设置DeviceNet装置。正确设置DeviceNet装置参数"
+    },
+    {
+      "code": "ARC-045",
+      "name": "焊接设备离线",
+      "description": "焊接设备离线",
+      "category": "其他报警",
+      "level": "中等",
+      "solution": "检查焊机连接线路，排除是线路故障，再看硬件是否有问题，无问题就看软件是否分配I/O，\n若还是不行，进入控制启动界面，删除当前焊机配置，重新配置焊机"
     }
   ]
 }
