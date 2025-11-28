@@ -9,6 +9,10 @@ let isAdmin = false;
 let viewCount = 0;
 let searchCount = 0;
 
+// 同步节流变量
+let lastSyncTime = 0;
+const SYNC_THROTTLE_MS = 3000; // 3秒内只同步一次
+
 // DOM 元素
 document.addEventListener('DOMContentLoaded', function() {
     // 获取DOM元素
@@ -418,10 +422,8 @@ function incrementViewCount() {
     saveSiteStats();
     updatePublicStatsDisplay();
     
-    // 尝试同步到GitHub（降低频率，每次浏览不都同步）
-    if (siteStats.totalViews % 10 === 0) {
-        submitDataToGitHub(siteStats, 'stats');
-    }
+    // 尝试同步统计数据到云端
+    submitDataToGitHub(siteStats, 'stats');
 }
 
 function incrementSearchCount() {
@@ -434,6 +436,9 @@ function incrementSearchCount() {
     siteStats.totalSearches = (siteStats.totalSearches || 0) + 1;
     siteStats.todaySearches = (siteStats.todaySearches || 0) + 1;
     saveSiteStats();
+    
+    // 尝试同步统计数据到云端
+    submitDataToGitHub(siteStats, 'stats');
 }
 
 // 评论和地理位置相关功能
@@ -918,8 +923,16 @@ function mergeComments(localComments, remoteComments) {
     return merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 }
 
-// 提交数据到云端存储
+// 提交数据到云端存储（带节流机制）
 async function submitDataToGitHub(data, dataType) {
+    // 节流：在指定时间内只允许一次同步请求
+    const now = Date.now();
+    if (now - lastSyncTime < SYNC_THROTTLE_MS) {
+        console.log(`${dataType}同步请求被节流，上次同步时间: ${new Date(lastSyncTime)}`);
+        return;
+    }
+    lastSyncTime = now;
+    
     try {
         // 保存数据到本地
         if (dataType === 'comments') {
@@ -927,6 +940,9 @@ async function submitDataToGitHub(data, dataType) {
         } else if (dataType === 'stats') {
             saveSiteStats();
         }
+        
+        // 显示同步中状态
+        showSyncInProgressNotification(dataType);
         
         // 尝试使用JSONBin.io作为云端存储
         try {
@@ -1085,8 +1101,41 @@ function createDownloadFile(data, dataType) {
     URL.revokeObjectURL(url);
 }
 
+// 显示数据同步中提示
+function showSyncInProgressNotification(dataType) {
+    // 检查是否已经有同步中通知
+    if (document.getElementById('sync-in-progress')) {
+        return;
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = 'sync-notification';
+    notification.id = 'sync-in-progress';
+    notification.style.backgroundColor = 'rgba(33, 150, 243, 0.95)';
+    notification.innerHTML = `
+        <p>🔄 正在同步${dataType === 'comments' ? '评论' : '统计数据'}到云端...</p>
+        <div class="sync-spinner"></div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 10秒后自动关闭同步中通知
+    setTimeout(() => {
+        const inProgress = document.getElementById('sync-in-progress');
+        if (inProgress) {
+            inProgress.remove();
+        }
+    }, 10000);
+}
+
 // 显示数据同步提示
 function showDataSyncNotification(dataType, success) {
+    // 移除同步中通知
+    const inProgress = document.getElementById('sync-in-progress');
+    if (inProgress) {
+        inProgress.remove();
+    }
+    
     const notification = document.createElement('div');
     notification.className = 'sync-notification';
     

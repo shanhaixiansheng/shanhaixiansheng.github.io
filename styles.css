@@ -725,3 +725,14 @@ footer {
 .close-notification:hover {
     background: rgba(255, 255, 255, 0.3);
 }
+
+/* 同步中加载动画 */
+.sync-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 2px solid white;
+    animation: spin 1s linear infinite;
+    margin: 8px auto 0;
+}
