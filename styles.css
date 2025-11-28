@@ -468,3 +468,182 @@ footer {
     font-size: 0.9rem;
     border-radius: 4px;
 }
+
+/* 评论区域样式 */
+.comments-section {
+    margin-top: 2rem;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.comments-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+}
+
+.comment-form {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #2980b9;
+}
+
+.comment-note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: 1rem;
+}
+
+.comments-list h4 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.comment-count {
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+.comment-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.comment-time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.comment-location {
+    background: #e3f2fd;
+    color: #0d47a1;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+}
+
+.comment-content {
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.comment-reply, .comment-like {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.comment-reply:hover, .comment-like:hover {
+    background: #f0f0f0;
+}
+
+.comment-reply.active {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.no-comments {
+    text-align: center;
+    padding: 2rem 0;
+    color: #666;
+    font-style: italic;
+}
+
+/* 公共网站统计区域 */
+.site-stats-public {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+/* 脏话识别警告 */
+.comment-warning {
+    background-color: #ffebee;
+    border-left: 4px solid #f44336;
+    padding: 0.8rem;
+    margin-top: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #c62828;
+}

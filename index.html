@@ -55,6 +55,32 @@
                 <div id="loadingIndicator" class="hidden">加载中...</div>
                 <div id="noResults" class="hidden">未找到匹配的结果</div>
                 <div id="searchResults"></div>
+                
+                <!-- 评论区域 -->
+                <div id="commentsSection" class="comments-section hidden">
+                    <h3>评论与讨论</h3>
+                    <div class="comment-form">
+                        <div class="form-group">
+                            <label for="commentName">昵称:</label>
+                            <input type="text" id="commentName" placeholder="请输入您的昵称">
+                        </div>
+                        <div class="form-group">
+                            <label for="commentContent">评论内容:</label>
+                            <textarea id="commentContent" placeholder="请输入您的评论..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button id="submitComment" class="submit-btn">发表评论</button>
+                            <span class="comment-note">您的IP和地理位置将被记录用于显示来源地</span>
+                        </div>
+                    </div>
+                    <div class="comments-list">
+                        <h4>用户评论 <span class="comment-count">(0)</span></h4>
+                        <div id="commentsList">
+                            <!-- 评论将在这里动态加载 -->
+                        </div>
+                        <div id="noComments" class="no-comments">暂无评论，成为第一个发表评论的人吧！</div>
+                    </div>
+                </div>
             </div>
         </section>
         
@@ -110,6 +136,9 @@
     
     <footer>
         <div class="container">
+            <div class="site-stats-public">
+                <p>网站总浏览量: <span id="publicViewCount">--</span> 次 | 今日浏览量: <span id="todayViewCount">--</span> 次</p>
+            </div>
             <p>© 2025 工业机器人查询助手 - 由<span id="adminLoginFooterBtn" class="admin-link">Life</span>开发</p>
         </div>
     </footer>
