@@ -73,6 +73,9 @@ async function initializePage() {
     loadSiteStats();
     incrementViewCount();
     
+    // 更新公共统计显示（包括运行天数）
+    updatePublicStatsDisplay();
+    
     // 初始化评论功能
     loadComments();
     displayComments();
@@ -558,16 +561,11 @@ function getRunningDays() {
     const timeDiff = currentDate - startDate;
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
     
-    return daysDiff;
+    // 确保不会显示负数（如果是未来日期）
+    return daysDiff > 0 ? daysDiff : 0;
 }
 
-// 增加浏览量
-function incrementViewCount() {
-    siteStats.totalViews = (siteStats.totalViews || 0) + 1;
-    siteStats.todayViews = (siteStats.todayViews || 0) + 1;
-    saveSiteStats();
-    updatePublicStatsDisplay();
-}
+// 加载评论数据
 
 // 加载评论数据
 function loadComments() {
