@@ -91,7 +91,9 @@ async function initializePage() {
         console.log('用户位置:', location);
     });
     
-
+    // 移除加载状态
+    document.body.classList.remove('loading');
+    document.body.classList.add('loaded');
 }
 
 // 加载所有品牌数据
@@ -920,6 +922,7 @@ function addSmoothInteractions() {
 
 // 添加页面加载完成后的动画
 window.addEventListener('load', function() {
+    document.body.classList.remove('loading');
     document.body.classList.add('loaded');
     
     // 为结果区域添加延迟加载动画
