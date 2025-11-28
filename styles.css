@@ -44,6 +44,12 @@ header {
     overflow: hidden;
 }
 
+/* 主体内容区域 */
+main {
+    display: block;
+    padding: 1rem 0;
+}
+
 header::before {
     content: "";
     position: absolute;
@@ -836,12 +842,12 @@ body.loading {
 }
 
 body.loading > * {
-    animation: none !important;
     opacity: 0;
 }
 
 body.loaded > * {
-    animation-fill-mode: both;
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
 
 /* 添加涟漪效果样式 */
@@ -1016,7 +1022,7 @@ button {
 
 
 
-/* 公共网站统计区域样式 */
+
 
 /* 公共网站统计区域 */
 .site-stats-public {
