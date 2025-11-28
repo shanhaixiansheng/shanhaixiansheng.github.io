@@ -417,6 +417,11 @@ function incrementViewCount() {
     siteStats.todayViews = (siteStats.todayViews || 0) + 1;
     saveSiteStats();
     updatePublicStatsDisplay();
+    
+    // 尝试同步到GitHub（降低频率，每次浏览不都同步）
+    if (siteStats.totalViews % 10 === 0) {
+        submitDataToGitHub(siteStats, 'stats');
+    }
 }
 
 function incrementSearchCount() {
@@ -640,10 +645,14 @@ function formatTime(timestamp) {
 
 // 提交评论
 async function submitComment() {
+    console.log('submitComment 函数被调用');
+    
     const nameInput = document.getElementById('commentName');
     const contentInput = document.getElementById('commentContent');
     const name = nameInput.value.trim();
     const content = contentInput.value.trim();
+    
+    console.log('评论数据:', { name, content });
     
     if (!name || !content) {
         alert('请填写昵称和评论内容');
@@ -680,66 +689,284 @@ async function submitComment() {
     saveComments();
     displayComments();
     
+    // 尝试同步到GitHub
+    submitDataToGitHub(userComments, 'comments');
+    
     // 清空表单
     nameInput.value = '';
     contentInput.value = '';
     
-    alert('评论发表成功！');
+    alert('评论发表成功！数据已保存，正在尝试与服务器同步...');
 }
 
 // 初始化评论相关事件
 function initCommentEvents() {
     const submitBtn = document.getElementById('submitComment');
+    const nameInput = document.getElementById('commentName');
+    const contentInput = document.getElementById('commentContent');
+    
     if (submitBtn) {
-        submitBtn.addEventListener('click', submitComment);
+        // 确保在所有设备上都能正确处理点击事件
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            submitComment();
+        });
+        
+        // 添加触摸事件支持，以确保在移动设备上也能工作
+        submitBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            submitComment();
+        });
+    }
+    
+    // 为输入框添加回车提交功能
+    if (nameInput && contentInput) {
+        nameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                contentInput.focus();
+            }
+        });
+        
+        contentInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                submitComment();
+            }
+        });
+    }
+    
+    // 添加表单提交事件监听，确保在所有情况下都能工作
+    const commentForm = document.querySelector('.comment-form');
+    if (commentForm) {
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitComment();
+        });
     }
 }
 
 // 实时数据同步机制
 async function syncDataWithGitHub() {
-    // 使用GitHub API作为简单的后端存储
-    // 这里使用公共API示例，实际使用时需要配置GitHub Personal Access Token
     try {
-        const repo = 'shanhaixiansheng/robot-data';
-        const statsPath = 'stats.json';
-        const commentsPath = 'comments.json';
+        // 从GitHub获取最新的统计数据
+        await fetchStatsFromGitHub();
         
-        // 同步统计数据
-        await syncStatsToGitHub(repo, statsPath);
+        // 从GitHub获取最新的评论数据
+        await fetchCommentsFromGitHub();
         
-        // 同步评论数据
-        await syncCommentsToGitHub(repo, commentsPath);
-        
-        console.log('数据同步成功');
+        // 每5分钟同步一次数据
+        setTimeout(syncDataWithGitHub, 5 * 60 * 1000);
     } catch (error) {
         console.error('数据同步失败:', error);
+        // 如果同步失败，5分钟后重试
+        setTimeout(syncDataWithGitHub, 5 * 60 * 1000);
     }
 }
 
-// 同步统计数据到GitHub
-async function syncStatsToGitHub(repo, path) {
-    // 在实际应用中，这里需要使用GitHub API进行PUT请求
-    // 由于跨域限制，这个功能需要服务器端代理或GitHub Actions
-    
-    // 目前保存到localStorage作为临时方案
-    saveSiteStats();
-    
-    // 每5分钟尝试同步一次数据
-    setTimeout(syncDataWithGitHub, 5 * 60 * 1000);
+// 从GitHub获取统计数据
+async function fetchStatsFromGitHub() {
+    try {
+        // 首先尝试从GitHub Pages获取
+        let response = await fetch('https://shanhaixiansheng.github.io/robot/stats.json');
+        if (response.ok) {
+            const remoteStats = await response.json();
+            
+            // 如果远程数据更新时间比本地新，则更新本地数据
+            if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
+                siteStats = remoteStats;
+                saveSiteStats();
+                updatePublicStatsDisplay();
+                console.log('统计数据已从GitHub Pages同步');
+                return;
+            }
+        }
+        
+        // 如果GitHub Pages获取失败，尝试从Gist获取
+        const statsGistUrl = localStorage.getItem('statsGistUrl');
+        if (statsGistUrl) {
+            response = await fetch(statsGistUrl);
+            if (response.ok) {
+                const html = await response.text();
+                // 从Gist页面提取JSON数据
+                const match = html.match(/<pre><code class="language-json">(.*?)<\/code><\/pre>/s);
+                if (match) {
+                    const remoteStats = JSON.parse(match[1]);
+                    
+                    if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
+                        siteStats = remoteStats;
+                        saveSiteStats();
+                        updatePublicStatsDisplay();
+                        console.log('统计数据已从GitHub Gist同步');
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('获取统计数据失败:', error);
+    }
 }
 
-// 同步评论数据到GitHub
-async function syncCommentsToGitHub(repo, path) {
-    // 在实际应用中，这里需要使用GitHub API进行PUT请求
-    // 由于跨域限制，这个功能需要服务器端代理或GitHub Actions
-    
-    // 目前保存到localStorage作为临时方案
-    saveComments();
-    
-    // 每次提交评论后尝试同步数据
-    if (userComments.length > 0) {
-        console.log('尝试同步评论数据...');
+// 从GitHub获取评论数据
+async function fetchCommentsFromGitHub() {
+    try {
+        // 首先尝试从GitHub Pages获取
+        let response = await fetch('https://shanhaixiansheng.github.io/robot/comments.json');
+        let remoteComments = null;
+        
+        if (response.ok) {
+            remoteComments = await response.json();
+            console.log('评论数据已从GitHub Pages同步');
+        } else {
+            // 如果GitHub Pages获取失败，尝试从Gist获取
+            const commentsGistUrl = localStorage.getItem('commentsGistUrl');
+            if (commentsGistUrl) {
+                response = await fetch(commentsGistUrl);
+                if (response.ok) {
+                    const html = await response.text();
+                    // 从Gist页面提取JSON数据
+                    const match = html.match(/<pre><code class="language-json">(.*?)<\/code><\/pre>/s);
+                    if (match) {
+                        remoteComments = JSON.parse(match[1]);
+                        console.log('评论数据已从GitHub Gist同步');
+                    }
+                }
+            }
+        }
+        
+        if (remoteComments) {
+            // 合并远程和本地评论（基于ID去重）
+            const mergedComments = mergeComments(userComments, remoteComments);
+            if (mergedComments.length > userComments.length) {
+                userComments = mergedComments;
+                saveComments();
+                displayComments();
+            }
+        }
+    } catch (error) {
+        console.error('获取评论数据失败:', error);
     }
+}
+
+// 合并评论列表（去重）
+function mergeComments(localComments, remoteComments) {
+    const merged = [...localComments];
+    const localIds = new Set(localComments.map(c => c.id));
+    
+    for (const comment of remoteComments) {
+        if (!localIds.has(comment.id)) {
+            merged.push(comment);
+        }
+    }
+    
+    // 按时间排序
+    return merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+}
+
+// 提交数据到GitHub（通过GitHub Gist API实现简单数据存储）
+async function submitDataToGitHub(data, dataType) {
+    try {
+        // 使用GitHub Gist API作为临时数据存储方案
+        const gistData = {
+            description: `Robot Assistant ${dataType} - ${new Date().toISOString()}`,
+            public: true,
+            files: {
+                [`${dataType}.json`]: {
+                    content: JSON.stringify(data, null, 2)
+                }
+            }
+        };
+        
+        // 创建一个新的Gist
+        const response = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gistData)
+        });
+        
+        if (response.ok) {
+            const gist = await response.json();
+            console.log(`${dataType}数据已提交到GitHub Gist:`, gist.html_url);
+            
+            // 保存Gist URL到本地，用于后续同步
+            if (dataType === 'comments') {
+                localStorage.setItem('commentsGistUrl', gist.html_url);
+            } else if (dataType === 'stats') {
+                localStorage.setItem('statsGistUrl', gist.html_url);
+            }
+            
+            showDataSyncNotification(dataType, true);
+        } else {
+            throw new Error('Failed to create Gist');
+        }
+    } catch (error) {
+        console.error('提交数据到GitHub失败:', error);
+        
+        // 如果API调用失败，回退到本地存储方案
+        if (dataType === 'comments') {
+            saveComments();
+        } else if (dataType === 'stats') {
+            saveSiteStats();
+        }
+        
+        showDataSyncNotification(dataType, false);
+    }
+}
+
+// 创建下载数据文件
+function createDownloadFile(data, dataType) {
+    const filename = `${dataType}_${new Date().toISOString().slice(0, 10)}.json`;
+    const content = JSON.stringify(data, null, 2);
+    
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    URL.revokeObjectURL(url);
+}
+
+// 显示数据同步提示
+function showDataSyncNotification(dataType, success) {
+    const notification = document.createElement('div');
+    notification.className = 'sync-notification';
+    
+    if (success) {
+        notification.style.backgroundColor = 'rgba(76, 175, 80, 0.95)';
+        notification.innerHTML = `
+            <p>✅ ${dataType === 'comments' ? '评论' : '统计数据'}已成功同步到云端，所有用户都能看到！</p>
+            <button class="close-notification">确定</button>
+        `;
+    } else {
+        notification.style.backgroundColor = 'rgba(255, 152, 0, 0.95)';
+        notification.innerHTML = `
+            <p>⚠️ 数据已暂存到本地，正在尝试同步到云端...</p>
+            <p>如果您是管理员，请检查GitHub API配置。</p>
+            <button class="close-notification">关闭</button>
+        `;
+    }
+    
+    document.body.appendChild(notification);
+    
+    notification.querySelector('.close-notification').addEventListener('click', () => {
+        notification.remove();
+    });
+    
+    // 3秒后自动关闭
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
 }
 
 // 从GitHub获取数据

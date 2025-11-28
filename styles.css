@@ -495,6 +495,27 @@ footer {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 确保评论表单在移动设备上正确显示 */
+.comment-form {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.comment-form input, 
+.comment-form textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.comment-form button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 .comments-section h3 {
     color: #2c3e50;
     margin-bottom: 1.5rem;
@@ -667,4 +688,40 @@ footer {
     border-radius: 4px;
     font-size: 0.9rem;
     color: #c62828;
+}
+
+/* 数据同步通知 */
+.sync-notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(33, 150, 243, 0.95);
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sync-notification p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.close-notification {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background 0.2s ease;
+}
+
+.close-notification:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
