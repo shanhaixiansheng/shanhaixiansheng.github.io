@@ -9,9 +9,7 @@ let isAdmin = false;
 let viewCount = 0;
 let searchCount = 0;
 
-// 同步节流变量
-let lastSyncTime = 0;
-const SYNC_THROTTLE_MS = 3000; // 3秒内只同步一次
+
 
 // DOM 元素
 document.addEventListener('DOMContentLoaded', function() {
@@ -93,8 +91,7 @@ async function initializePage() {
         console.log('用户位置:', location);
     });
     
-    // 启动数据同步机制
-    syncDataWithGitHub();
+
 }
 
 // 加载所有品牌数据
@@ -123,6 +120,28 @@ async function loadBrandData(brand) {
     const cacheKey = `${brand}-${currentType}`;
     currentData = dataCache[cacheKey] ? dataCache[cacheKey].data : [];
     
+    // 添加调试日志
+    console.log(`加载 ${brand}-${currentType} 数据，缓存键: ${cacheKey}`, {
+        缓存存在: !!dataCache[cacheKey],
+        数据长度: currentData.length
+    });
+    
+    // 确保数据加载完成
+    if (!currentData || currentData.length === 0) {
+        console.warn('警告: 数据为空，可能是加载失败或缓存问题');
+        // 尝试直接从文件加载数据
+        try {
+            const data = await loadData(brand, currentType);
+            if (data && data.data) {
+                dataCache[cacheKey] = data;
+                currentData = data.data;
+                console.log('直接加载数据成功，数据长度:', currentData.length);
+            }
+        } catch (error) {
+            console.error('直接加载数据失败:', error);
+        }
+    }
+    
     // 更新最后更新时间（仅管理员可见）
     if (isAdmin) {
         const lastUpdateElement = document.getElementById('lastUpdate');
@@ -137,11 +156,14 @@ async function loadBrandData(brand) {
 // 加载数据
 async function loadData(brand, type) {
     try {
+        console.log(`尝试加载数据: data/${brand}-${type}.json`);
         const response = await fetch(`data/${brand}-${type}.json`);
         if (!response.ok) {
             throw new Error(`HTTP错误! 状态码: ${response.status}`);
         }
-        return await response.json();
+        const data = await response.json();
+        console.log(`成功加载 ${brand}-${type} 数据，数据长度:`, data.data ? data.data.length : 0);
+        return data;
     } catch (error) {
         console.error(`加载 ${brand}-${type} 数据失败:`, error);
         return { brand, type, lastUpdated: '未知', data: [] };
@@ -178,6 +200,8 @@ function performSearch() {
     const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
     const searchType = document.querySelector('input[name="searchType"]:checked').value;
     
+    console.log(`开始搜索: 关键词="${searchTerm}", 类型="${searchType}", 数据类型="${currentType}", 品牌="${currentBrand}", 当前数据量=${currentData.length}`);
+    
     // 如果搜索词为空，清空结果
     if (!searchTerm) {
         clearResults();
@@ -198,6 +222,7 @@ function performSearch() {
             }
         });
         
+        console.log('精确搜索结果:', result);
         searchResult = result;
         displayResult();
     } else {
@@ -216,6 +241,7 @@ function performSearch() {
             }
         });
         
+        console.log('模糊搜索结果数量:', results.length);
         searchResult = results;
         displayResults();
     }
@@ -227,14 +253,21 @@ function displayResult() {
     const noResultsElement = document.getElementById('noResults');
     const resultsSection = document.getElementById('resultsSection');
     
+    console.log('显示单个结果:', searchResult);
+    console.log('结果容器元素:', resultsContainer);
+    console.log('无结果元素:', noResultsElement);
+    console.log('结果区域元素:', resultsSection);
+    
     // 显示结果区域
     resultsSection.classList.remove('hidden');
+    console.log('已显示结果区域，移除hidden类');
     
     // 清空之前的结果
     resultsContainer.innerHTML = '';
     
     // 如果没有结果，显示无结果提示
     if (!searchResult) {
+        console.log('没有搜索结果，显示无结果提示');
         resultsContainer.innerHTML = '';
         noResultsElement.classList.remove('hidden');
         return;
@@ -244,7 +277,10 @@ function displayResult() {
     noResultsElement.classList.add('hidden');
     
     // 创建并添加结果元素
-    resultsContainer.appendChild(createResultElement(searchResult));
+    const resultElement = createResultElement(searchResult);
+    console.log('创建的结果元素:', resultElement);
+    resultsContainer.appendChild(resultElement);
+    console.log('已添加结果元素到容器');
 }
 
 // 显示多个结果（模糊搜索）
@@ -253,14 +289,21 @@ function displayResults() {
     const noResultsElement = document.getElementById('noResults');
     const resultsSection = document.getElementById('resultsSection');
     
+    console.log('显示多个结果，结果数量:', searchResult ? searchResult.length : 0);
+    console.log('结果容器元素:', resultsContainer);
+    console.log('无结果元素:', noResultsElement);
+    console.log('结果区域元素:', resultsSection);
+    
     // 显示结果区域
     resultsSection.classList.remove('hidden');
+    console.log('已显示结果区域，移除hidden类');
     
     // 清空之前的结果
     resultsContainer.innerHTML = '';
     
     // 如果没有结果，显示无结果提示
     if (!searchResult || searchResult.length === 0) {
+        console.log('没有搜索结果，显示无结果提示');
         resultsContainer.innerHTML = '';
         noResultsElement.classList.remove('hidden');
         return;
@@ -272,11 +315,15 @@ function displayResults() {
     // 只显示前3条结果
     const maxResults = 3;
     const limitedResults = searchResult.slice(0, maxResults);
+    console.log('将显示前', limitedResults.length, '个结果');
     
     // 创建并添加结果元素
-    limitedResults.forEach(item => {
-        resultsContainer.appendChild(createResultElement(item));
+    limitedResults.forEach((item, index) => {
+        const resultElement = createResultElement(item);
+        console.log(`创建结果元素 ${index}:`, resultElement);
+        resultsContainer.appendChild(resultElement);
     });
+    console.log('已添加所有结果元素到容器');
     
     // 如果搜索结果超过3条，添加提示信息
     if (searchResult.length > maxResults) {
@@ -478,32 +525,7 @@ async function getUserLocation() {
     }
     
     try {
-        // 先尝试浏览器地理位置API
-        if (navigator.geolocation) {
-            const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject);
-            });
-            
-            // 使用免费的地理定位API获取省份信息
-            const response = await fetch(`https://api.ipbase.com/v1/json?apikey=YOUR_API_KEY&ip=${ip}`);
-            const data = await response.json();
-            
-            if (data && data.data) {
-                userLocation = {
-                    country: data.data.country.name || '未知',
-                    region: data.data.region.name || '未知',
-                    city: data.data.city.name || '未知',
-                    ip: data.data.ip || '未知'
-                };
-                return userLocation;
-            }
-        }
-    } catch (error) {
-        console.error('获取地理位置失败:', error);
-    }
-    
-    // 如果失败，使用IP获取大致位置
-    try {
+        // 使用IP获取大致位置
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
         
@@ -754,336 +776,17 @@ function initCommentEvents() {
     }
 }
 
-// 实时数据同步机制
-async function syncDataWithGitHub() {
-    try {
-        // 从GitHub Pages获取最新的统计数据
-        await fetchStatsFromGitHub();
-        
-        // 从GitHub Pages获取最新的评论数据
-        await fetchCommentsFromGitHub();
-        
-        // 每3分钟同步一次数据
-        setTimeout(syncDataWithGitHub, 3 * 60 * 1000);
-    } catch (error) {
-        console.error('数据同步失败:', error);
-        // 如果同步失败，1分钟后重试
-        setTimeout(syncDataWithGitHub, 60 * 1000);
-    }
-}
 
-// 从云端获取统计数据
-async function fetchStatsFromGitHub() {
-    try {
-        // 1. 首先尝试从JSONBin.io获取
-        try {
-            const statsBinId = localStorage.getItem('statsBinId');
-            if (statsBinId) {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${statsBinId}/latest`);
-                if (response.ok) {
-                    const remoteStats = await response.json();
-                    
-                    if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
-                        siteStats = remoteStats;
-                        saveSiteStats();
-                        updatePublicStatsDisplay();
-                        console.log('统计数据已从JSONBin.io同步');
-                        return;
-                    }
-                }
-            }
-        } catch (error) {
-            console.log('从JSONBin.io获取统计数据失败:', error);
-        }
-        
-        // 2. 尝试从MyJSON获取
-        try {
-            const statsJsonUri = localStorage.getItem('statsJsonUri');
-            if (statsJsonUri) {
-                const response = await fetch(statsJsonUri);
-                if (response.ok) {
-                    const remoteStats = await response.json();
-                    
-                    if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
-                        siteStats = remoteStats;
-                        saveSiteStats();
-                        updatePublicStatsDisplay();
-                        console.log('统计数据已从MyJSON同步');
-                        return;
-                    }
-                }
-            }
-        } catch (error) {
-            console.log('从MyJSON获取统计数据失败:', error);
-        }
-        
-        // 3. 尝试从GitHub Pages获取
-        let response = await fetch('https://shanhaixiansheng.github.io/robot/stats.json');
-        if (response.ok) {
-            const remoteStats = await response.json();
-            
-            if (remoteStats.lastUpdated && (!siteStats.lastUpdated || new Date(remoteStats.lastUpdated) > new Date(siteStats.lastUpdated))) {
-                siteStats = remoteStats;
-                saveSiteStats();
-                updatePublicStatsDisplay();
-                console.log('统计数据已从GitHub Pages同步');
-                return;
-            }
-        }
-        
-    } catch (error) {
-        console.error('获取统计数据失败:', error);
-    }
-}
 
-// 从云端获取评论数据
-async function fetchCommentsFromGitHub() {
-    try {
-        // 1. 首先尝试从JSONBin.io获取
-        try {
-            const commentsBinId = localStorage.getItem('commentsBinId');
-            if (commentsBinId) {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${commentsBinId}/latest`);
-                if (response.ok) {
-                    const remoteComments = await response.json();
-                    
-                    if (remoteComments && remoteComments.length > 0) {
-                        // 合并远程和本地评论（基于ID去重）
-                        const mergedComments = mergeComments(userComments, remoteComments);
-                        if (mergedComments.length > userComments.length) {
-                            userComments = mergedComments;
-                            saveComments();
-                            displayComments();
-                            console.log('评论数据已从JSONBin.io同步');
-                        }
-                        return;
-                    }
-                }
-            }
-        } catch (error) {
-            console.log('从JSONBin.io获取评论数据失败:', error);
-        }
-        
-        // 2. 尝试从MyJSON获取
-        try {
-            const commentsJsonUri = localStorage.getItem('commentsJsonUri');
-            if (commentsJsonUri) {
-                const response = await fetch(commentsJsonUri);
-                if (response.ok) {
-                    const remoteComments = await response.json();
-                    
-                    if (remoteComments && remoteComments.length > 0) {
-                        // 合并远程和本地评论（基于ID去重）
-                        const mergedComments = mergeComments(userComments, remoteComments);
-                        if (mergedComments.length > userComments.length) {
-                            userComments = mergedComments;
-                            saveComments();
-                            displayComments();
-                            console.log('评论数据已从MyJSON同步');
-                        }
-                        return;
-                    }
-                }
-            }
-        } catch (error) {
-            console.log('从MyJSON获取评论数据失败:', error);
-        }
-        
-        // 3. 尝试从GitHub Pages获取
-        let response = await fetch('https://shanhaixiansheng.github.io/robot/comments.json');
-        if (response.ok) {
-            const remoteComments = await response.json();
-            
-            if (remoteComments && remoteComments.length > 0) {
-                // 合并远程和本地评论（基于ID去重）
-                const mergedComments = mergeComments(userComments, remoteComments);
-                if (mergedComments.length > userComments.length) {
-                    userComments = mergedComments;
-                    saveComments();
-                    displayComments();
-                    console.log('评论数据已从GitHub Pages同步');
-                }
-            }
-        }
-        
-    } catch (error) {
-        console.error('获取评论数据失败:', error);
-    }
-}
 
-// 合并评论列表（去重）
-function mergeComments(localComments, remoteComments) {
-    const merged = [...localComments];
-    const localIds = new Set(localComments.map(c => c.id));
-    
-    for (const comment of remoteComments) {
-        if (!localIds.has(comment.id)) {
-            merged.push(comment);
-        }
-    }
-    
-    // 按时间排序
-    return merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-}
 
-// 提交数据到云端存储（带节流机制）
-/* 数据同步功能已禁用
-async function submitDataToGitHub(data, dataType) {
-    // 节流：在指定时间内只允许一次同步请求
-    const now = Date.now();
-    if (now - lastSyncTime < SYNC_THROTTLE_MS) {
-        console.log(`${dataType}同步请求被节流，上次同步时间: ${new Date(lastSyncTime)}`);
-        return;
-    }
-    lastSyncTime = now;
-    
-    try {
-        // 保存数据到本地
-        if (dataType === 'comments') {
-            saveComments();
-        } else if (dataType === 'stats') {
-            saveSiteStats();
-        }
-        
-    // 显示同步中状态 - 已禁用
-    // showSyncInProgressNotification(dataType);
-        
-        // 尝试使用JSONBin.io作为云端存储
-        try {
-            await submitToJSONBin(data, dataType);
-            return;
-        } catch (error) {
-            console.log('JSONBin.io提交失败:', error);
-        }
-        
-        // 尝试使用MyJSON作为备用方案
-        try {
-            await submitToMyJSON(data, dataType);
-            return;
-        } catch (error) {
-            console.log('MyJSON提交失败:', error);
-        }
-        
-        // 最后的备用方案：使用GitHub Issues API
-        try {
-            await submitToGitHubIssues(data, dataType);
-        } catch (error) {
-            console.error('所有数据提交方案都失败:', error);
-            showDataSyncNotification(dataType, false);
-        }
-        
-    } catch (error) {
-        console.error('提交数据到云端失败:', error);
-        showDataSyncNotification(dataType, false);
-    }
-} */
 
-// 提交数据到JSONBin.io
-async function submitToJSONBin(data, dataType) {
-    const jsonData = JSON.stringify(data, null, 2);
-    
-    // 创建一个新的JSON Bin
-    const response = await fetch('https://api.jsonbin.io/v3/b', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Master-Key': '$2a$10$yourkeyhere', // 这是一个示例密钥，需要替换为实际密钥
-        },
-        body: jsonData
-    });
-    
-    if (response.ok) {
-        const result = await response.json();
-        console.log(`${dataType}数据已提交到JSONBin.io:`, result);
-        
-        // 保存Bin ID到本地，用于后续同步
-        if (dataType === 'comments') {
-            localStorage.setItem('commentsBinId', result.id);
-        } else if (dataType === 'stats') {
-            localStorage.setItem('statsBinId', result.id);
-        }
-        
-        showDataSyncNotification(dataType, true);
-    } else {
-        throw new Error('Failed to create JSONBin');
-    }
-}
 
-// 提交数据到MyJSON
-async function submitToMyJSON(data, dataType) {
-    const jsonData = JSON.stringify(data, null, 2);
-    
-    // 创建一个新的JSON文档
-    const response = await fetch('https://api.myjson.com/bins', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: jsonData
-    });
-    
-    if (response.ok) {
-        const result = await response.json();
-        console.log(`${dataType}数据已提交到MyJSON:`, result);
-        
-        // 保存URI到本地，用于后续同步
-        if (dataType === 'comments') {
-            localStorage.setItem('commentsJsonUri', result.uri);
-        } else if (dataType === 'stats') {
-            localStorage.setItem('statsJsonUri', result.uri);
-        }
-        
-        showDataSyncNotification(dataType, true);
-    } else {
-        throw new Error('Failed to create MyJSON');
-    }
-}
 
-// 使用GitHub Issues API作为数据存储的最后备用方案
-async function submitToGitHubIssues(data, dataType) {
-    try {
-        // 创建一个包含数据的Issue，用作简单的数据存储
-        const issueTitle = `Data Sync: ${dataType} - ${new Date().toISOString()}`;
-        const issueBody = `
-### ${dataType} Data Update
 
-更新时间: ${new Date().toISOString()}
 
-\`\`\`json
-${JSON.stringify(data, null, 2)}
-\`\`\`
-        `;
-        
-        // 使用GitHub Issues API创建Issue（需要用户手动创建GitHub Personal Access Token）
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        const githubUrl = 'https://api.github.com/repos/shanhaixiansheng/robot/issues';
-        
-        const issueData = {
-            title: issueTitle,
-            body: issueBody,
-            labels: [dataType, 'data-sync']
-        };
-        
-        const response = await fetch(proxyUrl + githubUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(issueData)
-        });
-        
-        if (response.ok || response.status === 201) {
-            console.log(`${dataType}数据已作为Issue提交到GitHub`);
-            showDataSyncNotification(dataType, true);
-        } else {
-            throw new Error('Failed to create Issue');
-        }
-    } catch (error) {
-        console.error('提交到GitHub Issues失败:', error);
-        throw error;
-    }
-}
+
+
 
 // 创建下载数据文件
 function createDownloadFile(data, dataType) {
@@ -1105,72 +808,7 @@ function createDownloadFile(data, dataType) {
     URL.revokeObjectURL(url);
 }
 
-// 显示数据同步中提示
-function showSyncInProgressNotification(dataType) {
-    // 检查是否已经有同步中通知
-    if (document.getElementById('sync-in-progress')) {
-        return;
-    }
-    
-    const notification = document.createElement('div');
-    notification.className = 'sync-notification';
-    notification.id = 'sync-in-progress';
-    notification.style.backgroundColor = 'rgba(33, 150, 243, 0.95)';
-    notification.innerHTML = `
-        <p>🔄 正在同步${dataType === 'comments' ? '评论' : '统计数据'}到云端...</p>
-        <div class="sync-spinner"></div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // 10秒后自动关闭同步中通知
-    setTimeout(() => {
-        const inProgress = document.getElementById('sync-in-progress');
-        if (inProgress) {
-            inProgress.remove();
-        }
-    }, 10000);
-}
 
-// 显示数据同步提示
-function showDataSyncNotification(dataType, success) {
-    // 移除同步中通知
-    const inProgress = document.getElementById('sync-in-progress');
-    if (inProgress) {
-        inProgress.remove();
-    }
-    
-    const notification = document.createElement('div');
-    notification.className = 'sync-notification';
-    
-    if (success) {
-        notification.style.backgroundColor = 'rgba(76, 175, 80, 0.95)';
-        notification.innerHTML = `
-            <p>✅ ${dataType === 'comments' ? '评论' : '统计数据'}已成功同步到云端，所有用户都能看到！</p>
-            <button class="close-notification">确定</button>
-        `;
-    } else {
-        notification.style.backgroundColor = 'rgba(255, 152, 0, 0.95)';
-        notification.innerHTML = `
-            <p>⚠️ 数据已暂存到本地，正在尝试自动同步...</p>
-            <p>如果同步失败，数据将保存在本地存储中，下次尝试时会自动同步。</p>
-            <button class="close-notification">关闭</button>
-        `;
-    }
-    
-    document.body.appendChild(notification);
-    
-    notification.querySelector('.close-notification').addEventListener('click', () => {
-        notification.remove();
-    });
-    
-    // 5秒后自动关闭
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
-    }, 5000);
-}
 
 // 从GitHub获取数据
 async function fetchDataFromGitHub(repo, path) {
