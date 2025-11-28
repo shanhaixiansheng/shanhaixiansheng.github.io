@@ -83,11 +83,6 @@ async function initializePage() {
     // 更新公共统计显示（包括运行天数）
     updatePublicStatsDisplay();
     
-    // 初始化评论功能
-    loadComments();
-    displayComments();
-    initCommentEvents();
-    
     // 获取用户位置
     getUserLocation().then(location => {
         console.log('用户位置:', location);
@@ -444,9 +439,8 @@ function incrementSearchCount() {
     submitDataToGitHub(siteStats, 'stats');
 }
 
-// 评论和地理位置相关功能
+// 地理位置相关功能
 let userLocation = null;
-let userComments = [];
 let siteStats = {
     totalViews: 0,
     todayViews: 0,
@@ -455,21 +449,7 @@ let siteStats = {
     lastUpdated: null
 };
 
-// 脏话识别列表
-const badWords = [
-    '操', '肏', '干', '日', '草', '妈', '妈逼', '傻逼', '傻B', '傻b', 'SB', 'sb',
-    '他妈', '他吗', '他妈的', 'TMD', 'tmd', '妈蛋', '废物', '废物点心',
-    '滚', '去死', '死妈', '死全家', '尼玛', '你妈', '你M', 'M的',
-    'CAO', 'cao', 'FUCK', 'fuck', 'SHIT', 'shit', 'BITCH', 'bitch', 'ASS', 'ass',
-    '操你', '草你', '肏你', '狗日的', '狗屎', '屄', '逼', 'B', 'b',
-    '鸡巴', 'JB', 'jb', '屌', '阴道', '淫荡', '淫秽', '色情','qnmd'
-];
 
-// 检查脏话
-function containsBadWords(text) {
-    const lowerText = text.toLowerCase();
-    return badWords.some(word => lowerText.includes(word.toLowerCase()));
-}
 
 // 获取用户地理位置
 async function getUserLocation() {
@@ -580,55 +560,11 @@ function getRunningDays() {
 
 // 加载评论数据
 
-// 加载评论数据
-function loadComments() {
-    const stored = localStorage.getItem('robotAssistantComments');
-    if (stored) {
-        userComments = JSON.parse(stored);
-    }
-}
-
-// 保存评论数据
-function saveComments() {
-    localStorage.setItem('robotAssistantComments', JSON.stringify(userComments));
-}
 
 
 
-// 显示评论列表
-function displayComments() {
-    const commentsList = document.getElementById('commentsList');
-    const noComments = document.getElementById('noComments');
-    const commentCount = document.querySelector('.comment-count');
-    
-    if (userComments.length === 0) {
-        commentsList.innerHTML = '';
-        noComments.style.display = 'block';
-        commentCount.textContent = '(0)';
-        return;
-    }
-    
-    noComments.style.display = 'none';
-    commentCount.textContent = `(${userComments.length})`;
-    
-    // 按时间倒序排序
-    const sortedComments = [...userComments].sort((a, b) => 
-        new Date(b.timestamp) - new Date(a.timestamp)
-    );
-    
-    commentsList.innerHTML = sortedComments.map(comment => `
-        <div class="comment-item">
-            <div class="comment-header">
-                <span class="comment-author">${comment.author}</span>
-                <div>
-                    <span class="comment-location">${comment.location.region} ${comment.location.city}</span>
-                    <span class="comment-time">${formatTime(comment.timestamp)}</span>
-                </div>
-            </div>
-            <div class="comment-content">${comment.content}</div>
-        </div>
-    `).join('');
-}
+
+
 
 // 格式化时间
 function formatTime(timestamp) {
@@ -651,117 +587,15 @@ function formatTime(timestamp) {
     }
 }
 
-// 提交评论
-async function submitComment() {
-    console.log('submitComment 函数被调用');
-    
-    const nameInput = document.getElementById('commentName');
-    const contentInput = document.getElementById('commentContent');
-    const name = nameInput.value.trim();
-    const content = contentInput.value.trim();
-    
-    console.log('评论数据:', { name, content });
-    
-    if (!name || !content) {
-        alert('请填写昵称和评论内容');
-        return;
-    }
-    
-    // 检查脏话
-    if (containsBadWords(content)) {
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'comment-warning';
-        warningDiv.textContent = '您的评论包含不当内容，请修改后重试。';
-        contentInput.parentNode.insertBefore(warningDiv, contentInput.nextSibling);
-        
-        setTimeout(() => {
-            warningDiv.remove();
-        }, 3000);
-        return;
-    }
-    
-    // 获取用户位置
-    const location = await getUserLocation();
-    
-    // 创建新评论
-    const newComment = {
-        id: Date.now().toString(),
-        author: name,
-        content: content,
-        location: location,
-        timestamp: new Date().toISOString()
-    };
-    
-    // 添加到评论列表
-    userComments.push(newComment);
-    saveComments();
-    displayComments();
-    
-    // 尝试同步到GitHub
-    submitDataToGitHub(userComments, 'comments');
-    
-    // 清空表单
-    nameInput.value = '';
-    contentInput.value = '';
-    
-    alert('评论发表成功！数据已保存，正在尝试与服务器同步...');
-}
 
-// 初始化评论相关事件
-function initCommentEvents() {
-    const submitBtn = document.getElementById('submitComment');
-    const nameInput = document.getElementById('commentName');
-    const contentInput = document.getElementById('commentContent');
-    
-    if (submitBtn) {
-        // 确保在所有设备上都能正确处理点击事件
-        submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            submitComment();
-        });
-        
-        // 添加触摸事件支持，以确保在移动设备上也能工作
-        submitBtn.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            submitComment();
-        });
-    }
-    
-    // 为输入框添加回车提交功能
-    if (nameInput && contentInput) {
-        nameInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                contentInput.focus();
-            }
-        });
-        
-        contentInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault();
-                submitComment();
-            }
-        });
-    }
-    
-    // 添加表单提交事件监听，确保在所有情况下都能工作
-    const commentForm = document.querySelector('.comment-form');
-    if (commentForm) {
-        commentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitComment();
-        });
-    }
-}
+
+
 
 // 实时数据同步机制
 async function syncDataWithGitHub() {
     try {
         // 从GitHub Pages获取最新的统计数据
         await fetchStatsFromGitHub();
-        
-        // 从GitHub Pages获取最新的评论数据
-        await fetchCommentsFromGitHub();
         
         // 每3分钟同步一次数据
         setTimeout(syncDataWithGitHub, 3 * 60 * 1000);
@@ -836,95 +670,7 @@ async function fetchStatsFromGitHub() {
     }
 }
 
-// 从云端获取评论数据
-async function fetchCommentsFromGitHub() {
-    try {
-        // 1. 首先尝试从JSONBin.io获取
-        try {
-            const commentsBinId = localStorage.getItem('commentsBinId');
-            if (commentsBinId) {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${commentsBinId}/latest`);
-                if (response.ok) {
-                    const remoteComments = await response.json();
-                    
-                    if (remoteComments && remoteComments.length > 0) {
-                        // 合并远程和本地评论（基于ID去重）
-                        const mergedComments = mergeComments(userComments, remoteComments);
-                        if (mergedComments.length > userComments.length) {
-                            userComments = mergedComments;
-                            saveComments();
-                            displayComments();
-                            console.log('评论数据已从JSONBin.io同步');
-                        }
-                        return;
-                    }
-                }
-            }
-        } catch (error) {
-            console.log('从JSONBin.io获取评论数据失败:', error);
-        }
-        
-        // 2. 尝试从MyJSON获取
-        try {
-            const commentsJsonUri = localStorage.getItem('commentsJsonUri');
-            if (commentsJsonUri) {
-                const response = await fetch(commentsJsonUri);
-                if (response.ok) {
-                    const remoteComments = await response.json();
-                    
-                    if (remoteComments && remoteComments.length > 0) {
-                        // 合并远程和本地评论（基于ID去重）
-                        const mergedComments = mergeComments(userComments, remoteComments);
-                        if (mergedComments.length > userComments.length) {
-                            userComments = mergedComments;
-                            saveComments();
-                            displayComments();
-                            console.log('评论数据已从MyJSON同步');
-                        }
-                        return;
-                    }
-                }
-            }
-        } catch (error) {
-            console.log('从MyJSON获取评论数据失败:', error);
-        }
-        
-        // 3. 尝试从GitHub Pages获取
-        let response = await fetch('https://shanhaixiansheng.github.io/robot/comments.json');
-        if (response.ok) {
-            const remoteComments = await response.json();
-            
-            if (remoteComments && remoteComments.length > 0) {
-                // 合并远程和本地评论（基于ID去重）
-                const mergedComments = mergeComments(userComments, remoteComments);
-                if (mergedComments.length > userComments.length) {
-                    userComments = mergedComments;
-                    saveComments();
-                    displayComments();
-                    console.log('评论数据已从GitHub Pages同步');
-                }
-            }
-        }
-        
-    } catch (error) {
-        console.error('获取评论数据失败:', error);
-    }
-}
 
-// 合并评论列表（去重）
-function mergeComments(localComments, remoteComments) {
-    const merged = [...localComments];
-    const localIds = new Set(localComments.map(c => c.id));
-    
-    for (const comment of remoteComments) {
-        if (!localIds.has(comment.id)) {
-            merged.push(comment);
-        }
-    }
-    
-    // 按时间排序
-    return merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-}
 
 // 提交数据到云端存储（带节流机制）
 async function submitDataToGitHub(data, dataType) {
@@ -938,9 +684,7 @@ async function submitDataToGitHub(data, dataType) {
     
     try {
         // 保存数据到本地
-        if (dataType === 'comments') {
-            saveComments();
-        } else if (dataType === 'stats') {
+        if (dataType === 'stats') {
             saveSiteStats();
         }
         
@@ -996,9 +740,7 @@ async function submitToJSONBin(data, dataType) {
         console.log(`${dataType}数据已提交到JSONBin.io:`, result);
         
         // 保存Bin ID到本地，用于后续同步
-        if (dataType === 'comments') {
-            localStorage.setItem('commentsBinId', result.id);
-        } else if (dataType === 'stats') {
+        if (dataType === 'stats') {
             localStorage.setItem('statsBinId', result.id);
         }
         
@@ -1026,9 +768,7 @@ async function submitToMyJSON(data, dataType) {
         console.log(`${dataType}数据已提交到MyJSON:`, result);
         
         // 保存URI到本地，用于后续同步
-        if (dataType === 'comments') {
-            localStorage.setItem('commentsJsonUri', result.uri);
-        } else if (dataType === 'stats') {
+        if (dataType === 'stats') {
             localStorage.setItem('statsJsonUri', result.uri);
         }
         
@@ -1116,7 +856,7 @@ function showSyncInProgressNotification(dataType) {
     notification.id = 'sync-in-progress';
     notification.style.backgroundColor = 'rgba(33, 150, 243, 0.95)';
     notification.innerHTML = `
-        <p>🔄 正在同步${dataType === 'comments' ? '评论' : '统计数据'}到云端...</p>
+        <p>🔄 正在同步${dataType === 'stats' ? '统计数据' : '数据'}到云端...</p>
         <div class="sync-spinner"></div>
     `;
     
@@ -1145,7 +885,7 @@ function showDataSyncNotification(dataType, success) {
     if (success) {
         notification.style.backgroundColor = 'rgba(76, 175, 80, 0.95)';
         notification.innerHTML = `
-            <p>✅ ${dataType === 'comments' ? '评论' : '统计数据'}已成功同步到云端，所有用户都能看到！</p>
+            <p>✅ ${dataType === 'stats' ? '统计数据' : '数据'}已成功同步到云端！</p>
             <button class="close-notification">确定</button>
         `;
     } else {
@@ -1239,7 +979,7 @@ function addSmoothInteractions() {
     }, observerOptions);
     
     // 观察所有需要动画的元素
-    document.querySelectorAll('.result-item, .comment-item, .stat-item').forEach(item => {
+    document.querySelectorAll('.result-item, .stat-item').forEach(item => {
         observer.observe(item);
     });
     
@@ -1285,7 +1025,7 @@ window.addEventListener('load', function() {
     
     // 为结果区域添加延迟加载动画
     setTimeout(() => {
-        document.querySelectorAll('.result-item, .comment-item').forEach((item, index) => {
+        document.querySelectorAll('.result-item').forEach((item, index) => {
             setTimeout(() => {
                 item.style.opacity = '1';
                 item.style.transform = 'translateY(0)';
@@ -1321,13 +1061,13 @@ style.innerHTML = `
         }
     }
     
-    .loaded .result-item, .loaded .comment-item {
+    .loaded .result-item {
         opacity: 0;
         transform: translateY(20px);
         transition: opacity 0.5s ease, transform 0.5s ease;
     }
     
-    .loaded header, .loaded .search-section, .loaded .comments-section {
+    .loaded header, .loaded .search-section, .loaded .about-section {
         animation: slideInFromTop 0.8s ease-out;
     }
     
