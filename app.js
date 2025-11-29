@@ -259,10 +259,18 @@ function displayResult() {
     
     // 显示结果区域
     resultsSection.classList.remove('hidden');
-    console.log('已显示结果区域，移除hidden类');
+    resultsSection.style.display = 'block';
+    resultsSection.style.visibility = 'visible';
     
     // 清空之前的结果
     resultsContainer.innerHTML = '';
+    
+    // 确保容器样式正确
+    resultsContainer.style.display = 'block';
+    resultsContainer.style.visibility = 'visible';
+    resultsContainer.style.opacity = '1';
+    resultsContainer.style.color = '#000000';
+    resultsContainer.style.backgroundColor = '#ffffff';
     
     // 如果没有结果，显示无结果提示
     if (!searchResult) {
@@ -282,16 +290,12 @@ function displayResult() {
     console.log('已添加结果元素到容器');
     
     // 确保结果元素可见
-    setTimeout(() => {
-        resultElement.style.display = 'block';
-        resultElement.style.visibility = 'visible';
-        resultElement.style.opacity = '1';
-    }, 100);
+    resultElement.style.display = 'block';
+    resultElement.style.visibility = 'visible';
+    resultElement.style.opacity = '1';
     
-    // 确保结果容器本身可见
-    resultsContainer.style.display = 'block';
-    resultsContainer.style.visibility = 'visible';
-    resultsContainer.style.opacity = '1';
+    console.log('结果元素内容:', resultElement.innerHTML);
+    console.log('容器内容:', resultsContainer.innerHTML);
 }
 
 // 显示多个结果（模糊搜索）
@@ -307,10 +311,18 @@ function displayResults() {
     
     // 显示结果区域
     resultsSection.classList.remove('hidden');
-    console.log('已显示结果区域，移除hidden类');
+    resultsSection.style.display = 'block';
+    resultsSection.style.visibility = 'visible';
     
     // 清空之前的结果
     resultsContainer.innerHTML = '';
+    
+    // 确保容器样式正确
+    resultsContainer.style.display = 'block';
+    resultsContainer.style.visibility = 'visible';
+    resultsContainer.style.opacity = '1';
+    resultsContainer.style.color = '#000000';
+    resultsContainer.style.backgroundColor = '#ffffff';
     
     // 如果没有结果，显示无结果提示
     if (!searchResult || searchResult.length === 0) {
@@ -332,16 +344,24 @@ function displayResults() {
     limitedResults.forEach((item, index) => {
         const resultElement = createResultElement(item);
         console.log(`创建结果元素 ${index}:`, resultElement);
+        
+        // 直接添加到容器
         resultsContainer.appendChild(resultElement);
         
         // 确保新添加的元素可见
-        setTimeout(() => {
-            resultElement.style.display = 'block';
-            resultElement.style.visibility = 'visible';
-            resultElement.style.opacity = '1';
-        }, 100 * index); // 依次显示每个结果
+        resultElement.style.display = 'block';
+        resultElement.style.visibility = 'visible';
+        resultElement.style.opacity = '1';
+        
+        console.log(`结果元素 ${index} 已添加，当前内容:`, resultElement.innerHTML);
+        console.log(`结果元素 ${index} 样式:`, {
+            display: resultElement.style.display,
+            visibility: resultElement.style.visibility,
+            opacity: resultElement.style.opacity
+        });
     });
-    console.log('已添加所有结果元素到容器');
+    
+    console.log('已添加所有结果元素到容器，容器内容:', resultsContainer.innerHTML);
     
     // 如果搜索结果超过3条，添加提示信息
     if (searchResult.length > maxResults) {
@@ -351,13 +371,13 @@ function displayResults() {
         moreInfo.style.display = 'block';
         moreInfo.style.visibility = 'visible';
         moreInfo.style.color = '#856404';
+        moreInfo.style.padding = '1rem';
+        moreInfo.style.marginTop = '1rem';
+        moreInfo.style.backgroundColor = '#fff3cd';
+        moreInfo.style.borderLeft = '4px solid #ffc107';
         resultsContainer.appendChild(moreInfo);
+        console.log('已添加更多信息提示');
     }
-    
-    // 确保结果容器本身可见
-    resultsContainer.style.display = 'block';
-    resultsContainer.style.visibility = 'visible';
-    resultsContainer.style.opacity = '1';
 }
 
 // 清空结果
@@ -378,54 +398,126 @@ function clearResults() {
 function createResultElement(item) {
     const resultDiv = document.createElement('div');
     resultDiv.className = 'result-item';
+    
+    // 清除所有可能影响显示的类
+    resultDiv.className = 'result-item';
+    resultDiv.style.display = 'block';
+    resultDiv.style.visibility = 'visible';
+    resultDiv.style.opacity = '1';
+    resultDiv.style.color = '#000000'; // 使用纯黑色确保可见
+    resultDiv.style.backgroundColor = '#ffffff'; // 纯白背景
     resultDiv.style.border = '2px solid #e0e0e0';
-    resultDiv.style.backgroundColor = '#ffffff';
-    resultDiv.style.color = '#333333'; // 确保整个元素有默认文字颜色
-    
-    if (currentType === 'alarm') {
-        resultDiv.innerHTML = `
-            <div class="result-code" style="color: #d32f2f !important; background: #f8f9fa !important; font-size: 1.2rem !important; font-weight: bold !important;">${item.code}</div>
-            <div class="result-name" style="color: #1a237e !important; font-size: 1.1rem !important; font-weight: bold !important;">${item.name}</div>
-            <div class="result-description" style="color: #333333 !important; font-size: 1rem !important; line-height: 1.5 !important;">${item.description}</div>
-            <div class="result-details">
-                <div class="result-detail-item">
-                    <span style="color: #555555 !important; font-weight: bold !important;">类别:</span>
-                    <span style="color: #333333 !important;">${item.category}</span>
-                </div>
-            </div>
-            <div class="result-solution" style="margin-top: 1rem !important; padding: 1rem !important; background: #e8f5e9 !important; border-left: 4px solid #4caf50 !important;">
-                <strong style="color: #2e7d32 !important; font-size: 1rem !important;">解决方案:</strong> 
-                <span style="color: #333333 !important; font-size: 1rem !important; line-height: 1.5 !important;">${item.solution}</span>
-            </div>
-        `;
-    } else {
-        resultDiv.innerHTML = `
-            <div class="result-code" style="color: #d32f2f !important; background: #f8f9fa !important; font-size: 1.2rem !important; font-weight: bold !important;">${item.number}</div>
-            <div class="result-name" style="color: #1a237e !important; font-size: 1.1rem !important; font-weight: bold !important;">${item.name}</div>
-            <div class="result-description" style="color: #333333 !important; font-size: 1rem !important; line-height: 1.5 !important;">${item.description}</div>
-            <div class="result-details">
-                <div class="result-detail-item">
-                    <span style="color: #555555 !important; font-weight: bold !important;">类别:</span>
-                    <span style="color: #333333 !important;">${item.category}</span>
-                </div>
-                ${item.unit ? `
-                <div class="result-detail-item">
-                    <span style="color: #555555 !important; font-weight: bold !important;">单位:</span>
-                    <span style="color: #333333 !important;">${item.unit}</span>
-                </div>
-                ` : ''}
-            </div>
-        `;
-    }
-    
-    // 确保结果元素整体样式正确
     resultDiv.style.padding = '1.5rem';
     resultDiv.style.marginBottom = '1rem';
     resultDiv.style.borderRadius = '5px';
     resultDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-    resultDiv.style.display = 'block';
-    resultDiv.style.visibility = 'visible';
+    resultDiv.style.overflow = 'visible';
     
+    if (currentType === 'alarm') {
+        // 创建代码元素
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'result-code';
+        codeDiv.style.color = '#d32f2f';
+        codeDiv.style.background = '#f8f9fa';
+        codeDiv.style.fontSize = '1.2rem';
+        codeDiv.style.fontWeight = 'bold';
+        codeDiv.style.padding = '0.5rem';
+        codeDiv.style.marginBottom = '0.5rem';
+        codeDiv.style.borderRadius = '4px';
+        codeDiv.textContent = item.code;
+        
+        // 创建名称元素
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'result-name';
+        nameDiv.style.color = '#1a237e';
+        nameDiv.style.fontSize = '1.1rem';
+        nameDiv.style.fontWeight = 'bold';
+        nameDiv.style.marginBottom = '0.5rem';
+        nameDiv.textContent = item.name;
+        
+        // 创建描述元素
+        const descDiv = document.createElement('div');
+        descDiv.className = 'result-description';
+        descDiv.style.color = '#333333';
+        descDiv.style.fontSize = '1rem';
+        descDiv.style.lineHeight = '1.5';
+        descDiv.style.marginBottom = '1rem';
+        descDiv.textContent = item.description;
+        
+        // 创建类别元素
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'result-details';
+        categoryDiv.style.color = '#333333';
+        categoryDiv.style.marginBottom = '1rem';
+        categoryDiv.innerHTML = `<span style="font-weight: bold;">类别:</span> ${item.category}`;
+        
+        // 创建解决方案元素
+        const solutionDiv = document.createElement('div');
+        solutionDiv.className = 'result-solution';
+        solutionDiv.style.marginTop = '1rem';
+        solutionDiv.style.padding = '1rem';
+        solutionDiv.style.background = '#e8f5e9';
+        solutionDiv.style.borderLeft = '4px solid #4caf50';
+        solutionDiv.style.borderRadius = '4px';
+        solutionDiv.innerHTML = `<strong style="color: #2e7d32;">解决方案:</strong> <span style="color: #333333;">${item.solution}</span>`;
+        
+        // 添加所有元素到结果div
+        resultDiv.appendChild(codeDiv);
+        resultDiv.appendChild(nameDiv);
+        resultDiv.appendChild(descDiv);
+        resultDiv.appendChild(categoryDiv);
+        resultDiv.appendChild(solutionDiv);
+    } else {
+        // 变量查询结果
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'result-code';
+        codeDiv.style.color = '#d32f2f';
+        codeDiv.style.background = '#f8f9fa';
+        codeDiv.style.fontSize = '1.2rem';
+        codeDiv.style.fontWeight = 'bold';
+        codeDiv.style.padding = '0.5rem';
+        codeDiv.style.marginBottom = '0.5rem';
+        codeDiv.style.borderRadius = '4px';
+        codeDiv.textContent = item.number;
+        
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'result-name';
+        nameDiv.style.color = '#1a237e';
+        nameDiv.style.fontSize = '1.1rem';
+        nameDiv.style.fontWeight = 'bold';
+        nameDiv.style.marginBottom = '0.5rem';
+        nameDiv.textContent = item.name;
+        
+        const descDiv = document.createElement('div');
+        descDiv.className = 'result-description';
+        descDiv.style.color = '#333333';
+        descDiv.style.fontSize = '1rem';
+        descDiv.style.lineHeight = '1.5';
+        descDiv.style.marginBottom = '1rem';
+        descDiv.textContent = item.description;
+        
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'result-details';
+        categoryDiv.style.color = '#333333';
+        categoryDiv.style.marginBottom = '1rem';
+        categoryDiv.innerHTML = `<span style="font-weight: bold;">类别:</span> ${item.category}`;
+        
+        if (item.unit) {
+            const unitDiv = document.createElement('div');
+            unitDiv.className = 'result-details';
+            unitDiv.style.color = '#333333';
+            unitDiv.innerHTML = `<span style="font-weight: bold;">单位:</span> ${item.unit}`;
+            categoryDiv.appendChild(unitDiv);
+        }
+        
+        // 添加所有元素到结果div
+        resultDiv.appendChild(codeDiv);
+        resultDiv.appendChild(nameDiv);
+        resultDiv.appendChild(descDiv);
+        resultDiv.appendChild(categoryDiv);
+    }
+    
+    console.log('创建结果元素:', resultDiv);
     return resultDiv;
 }
 
