@@ -451,6 +451,38 @@ header p {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.5s ease-out;
+    color: #333333 !important;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* 确保搜索结果中的所有文字都可见 */
+#searchResults * {
+    color: inherit !important;
+}
+
+#searchResults .result-code {
+    color: #d32f2f !important;
+}
+
+#searchResults .result-name {
+    color: #1a237e !important;
+}
+
+#searchResults .result-description {
+    color: #333333 !important;
+}
+
+#searchResults .result-details {
+    color: #333333 !important;
+}
+
+#searchResults .result-solution {
+    color: #333333 !important;
+}
+
+#searchResults .result-solution strong {
+    color: #2e7d32 !important;
 }
 
 @keyframes fadeIn {
@@ -903,6 +935,13 @@ body.loading > * {
     opacity: 0;
 }
 
+/* 但是结果区域不应该被loading状态隐藏 */
+body.loading #resultsSection,
+body.loading #searchResults {
+    opacity: 1 !important;
+    animation: none !important;
+}
+
 body.loaded > * {
     animation-fill-mode: both;
 }
@@ -987,6 +1026,8 @@ button {
     color: #856404;
     font-size: 0.9rem;
     border-radius: 4px;
+    display: block !important;
+    visibility: visible !important;
 }
 
 /* 评论区域样式 */

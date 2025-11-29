@@ -280,6 +280,18 @@ function displayResult() {
     console.log('创建的结果元素:', resultElement);
     resultsContainer.appendChild(resultElement);
     console.log('已添加结果元素到容器');
+    
+    // 确保结果元素可见
+    setTimeout(() => {
+        resultElement.style.display = 'block';
+        resultElement.style.visibility = 'visible';
+        resultElement.style.opacity = '1';
+    }, 100);
+    
+    // 确保结果容器本身可见
+    resultsContainer.style.display = 'block';
+    resultsContainer.style.visibility = 'visible';
+    resultsContainer.style.opacity = '1';
 }
 
 // 显示多个结果（模糊搜索）
@@ -321,6 +333,13 @@ function displayResults() {
         const resultElement = createResultElement(item);
         console.log(`创建结果元素 ${index}:`, resultElement);
         resultsContainer.appendChild(resultElement);
+        
+        // 确保新添加的元素可见
+        setTimeout(() => {
+            resultElement.style.display = 'block';
+            resultElement.style.visibility = 'visible';
+            resultElement.style.opacity = '1';
+        }, 100 * index); // 依次显示每个结果
     });
     console.log('已添加所有结果元素到容器');
     
@@ -329,8 +348,16 @@ function displayResults() {
         const moreInfo = document.createElement('div');
         moreInfo.className = 'more-results-info';
         moreInfo.textContent = `模糊搜索找到 ${searchResult.length} 条结果，仅显示前 ${maxResults} 条。请使用更精确的关键词查找更多信息。`;
+        moreInfo.style.display = 'block';
+        moreInfo.style.visibility = 'visible';
+        moreInfo.style.color = '#856404';
         resultsContainer.appendChild(moreInfo);
     }
+    
+    // 确保结果容器本身可见
+    resultsContainer.style.display = 'block';
+    resultsContainer.style.visibility = 'visible';
+    resultsContainer.style.opacity = '1';
 }
 
 // 清空结果
@@ -353,41 +380,51 @@ function createResultElement(item) {
     resultDiv.className = 'result-item';
     resultDiv.style.border = '2px solid #e0e0e0';
     resultDiv.style.backgroundColor = '#ffffff';
+    resultDiv.style.color = '#333333'; // 确保整个元素有默认文字颜色
     
     if (currentType === 'alarm') {
         resultDiv.innerHTML = `
-            <div class="result-code" style="color: #d32f2f; background: #f8f9fa;">${item.code}</div>
-            <div class="result-name" style="color: #1a237e;">${item.name}</div>
-            <div class="result-description" style="color: #333333;">${item.description}</div>
+            <div class="result-code" style="color: #d32f2f !important; background: #f8f9fa !important; font-size: 1.2rem !important; font-weight: bold !important;">${item.code}</div>
+            <div class="result-name" style="color: #1a237e !important; font-size: 1.1rem !important; font-weight: bold !important;">${item.name}</div>
+            <div class="result-description" style="color: #333333 !important; font-size: 1rem !important; line-height: 1.5 !important;">${item.description}</div>
             <div class="result-details">
                 <div class="result-detail-item">
-                    <span style="color: #555555;">类别:</span>
-                    <span style="color: #333333;">${item.category}</span>
+                    <span style="color: #555555 !important; font-weight: bold !important;">类别:</span>
+                    <span style="color: #333333 !important;">${item.category}</span>
                 </div>
             </div>
-            <div class="result-solution">
-                <strong style="color: #2e7d32;">解决方案:</strong> <span style="color: #333333;">${item.solution}</span>
+            <div class="result-solution" style="margin-top: 1rem !important; padding: 1rem !important; background: #e8f5e9 !important; border-left: 4px solid #4caf50 !important;">
+                <strong style="color: #2e7d32 !important; font-size: 1rem !important;">解决方案:</strong> 
+                <span style="color: #333333 !important; font-size: 1rem !important; line-height: 1.5 !important;">${item.solution}</span>
             </div>
         `;
     } else {
         resultDiv.innerHTML = `
-            <div class="result-code" style="color: #d32f2f; background: #f8f9fa;">${item.number}</div>
-            <div class="result-name" style="color: #1a237e;">${item.name}</div>
-            <div class="result-description" style="color: #333333;">${item.description}</div>
+            <div class="result-code" style="color: #d32f2f !important; background: #f8f9fa !important; font-size: 1.2rem !important; font-weight: bold !important;">${item.number}</div>
+            <div class="result-name" style="color: #1a237e !important; font-size: 1.1rem !important; font-weight: bold !important;">${item.name}</div>
+            <div class="result-description" style="color: #333333 !important; font-size: 1rem !important; line-height: 1.5 !important;">${item.description}</div>
             <div class="result-details">
                 <div class="result-detail-item">
-                    <span style="color: #555555;">类别:</span>
-                    <span style="color: #333333;">${item.category}</span>
+                    <span style="color: #555555 !important; font-weight: bold !important;">类别:</span>
+                    <span style="color: #333333 !important;">${item.category}</span>
                 </div>
                 ${item.unit ? `
                 <div class="result-detail-item">
-                    <span style="color: #555555;">单位:</span>
-                    <span style="color: #333333;">${item.unit}</span>
+                    <span style="color: #555555 !important; font-weight: bold !important;">单位:</span>
+                    <span style="color: #333333 !important;">${item.unit}</span>
                 </div>
                 ` : ''}
             </div>
         `;
     }
+    
+    // 确保结果元素整体样式正确
+    resultDiv.style.padding = '1.5rem';
+    resultDiv.style.marginBottom = '1rem';
+    resultDiv.style.borderRadius = '5px';
+    resultDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+    resultDiv.style.display = 'block';
+    resultDiv.style.visibility = 'visible';
     
     return resultDiv;
 }
