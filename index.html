@@ -9,12 +9,19 @@
 <body class="loading">
     <header>
         <div class="header-left">
-            <a href="about.html" class="about-btn">关于我们</a>
+            <a href="about.html" class="about-btn">关于网站</a>
         </div>
         <div class="container">
-            <h1>工业机器人查询助手</h1>
-            <p>支持主流工业品牌报警代码和系统变量查询</p>
-            <p class="disclaimer">所有资料仅供参考，实际以机器人具体型号为主</p>
+            <div class="header-content">
+                <div class="site-avatar">
+                    <img src="网站头像.jpg" alt="网站头像">
+                </div>
+                <div class="header-text">
+                    <h1>工业机器人查询助手</h1>
+                    <p>支持主流工业品牌报警代码和系统变量查询</p>
+                    <p class="disclaimer">所有资料仅供参考，实际以机器人具体型号为主</p>
+                </div>
+            </div>
         </div>
     </header>
     
@@ -67,38 +74,6 @@
                 <div id="loadingIndicator" class="hidden">加载中...</div>
                 <div id="noResults" class="hidden">未找到匹配的结果</div>
                 <div id="searchResults"></div>
-            </div>
-        </section>
-        
-        <!-- 评论区域 -->
-        <section class="comments-section" id="commentsSection">
-            <div class="container">
-                <h3>评论与讨论</h3>
-                <form class="comment-form" id="commentForm">
-                    <div class="form-group">
-                        <label for="commentName">昵称:</label>
-                        <div class="input-container">
-                            <input type="text" id="commentName" placeholder="请输入您的昵称" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="commentContent">评论内容:</label>
-                        <div class="input-container">
-                            <textarea id="commentContent" placeholder="请输入您的评论..." required></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" id="submitComment" class="submit-btn">发表评论</button>
-                        <span class="comment-note">您的IP和地理位置将被记录用于显示来源地</span>
-                    </div>
-                </form>
-                <div class="comments-list">
-                    <h4>用户评论 <span class="comment-count">(0)</span></h4>
-                    <div id="commentsList">
-                        <!-- 评论将在这里动态加载 -->
-                    </div>
-                    <div id="noComments" class="no-comments">暂无评论，成为第一个发表评论的人吧！</div>
-                </div>
             </div>
         </section>
         

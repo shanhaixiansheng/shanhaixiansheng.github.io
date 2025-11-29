@@ -81,10 +81,7 @@ async function initializePage() {
     // 更新公共统计显示（包括运行天数）
     updatePublicStatsDisplay();
     
-    // 初始化评论功能
-    loadComments();
-    displayComments();
-    initCommentEvents();
+
     
     // 获取用户位置
     getUserLocation().then(location => {
@@ -354,36 +351,38 @@ function clearResults() {
 function createResultElement(item) {
     const resultDiv = document.createElement('div');
     resultDiv.className = 'result-item';
+    resultDiv.style.border = '2px solid #e0e0e0';
+    resultDiv.style.backgroundColor = '#ffffff';
     
     if (currentType === 'alarm') {
         resultDiv.innerHTML = `
-            <div class="result-code">${item.code}</div>
-            <div class="result-name">${item.name}</div>
-            <div class="result-description">${item.description}</div>
+            <div class="result-code" style="color: #d32f2f; background: #f8f9fa;">${item.code}</div>
+            <div class="result-name" style="color: #1a237e;">${item.name}</div>
+            <div class="result-description" style="color: #333333;">${item.description}</div>
             <div class="result-details">
                 <div class="result-detail-item">
-                    <span>类别:</span>
-                    <span>${item.category}</span>
+                    <span style="color: #555555;">类别:</span>
+                    <span style="color: #333333;">${item.category}</span>
                 </div>
             </div>
             <div class="result-solution">
-                <strong>解决方案:</strong> ${item.solution}
+                <strong style="color: #2e7d32;">解决方案:</strong> <span style="color: #333333;">${item.solution}</span>
             </div>
         `;
     } else {
         resultDiv.innerHTML = `
-            <div class="result-code">${item.number}</div>
-            <div class="result-name">${item.name}</div>
-            <div class="result-description">${item.description}</div>
+            <div class="result-code" style="color: #d32f2f; background: #f8f9fa;">${item.number}</div>
+            <div class="result-name" style="color: #1a237e;">${item.name}</div>
+            <div class="result-description" style="color: #333333;">${item.description}</div>
             <div class="result-details">
                 <div class="result-detail-item">
-                    <span>类别:</span>
-                    <span>${item.category}</span>
+                    <span style="color: #555555;">类别:</span>
+                    <span style="color: #333333;">${item.category}</span>
                 </div>
                 ${item.unit ? `
                 <div class="result-detail-item">
-                    <span>单位:</span>
-                    <span>${item.unit}</span>
+                    <span style="color: #555555;">单位:</span>
+                    <span style="color: #333333;">${item.unit}</span>
                 </div>
                 ` : ''}
             </div>
@@ -493,9 +492,8 @@ function incrementSearchCount() {
     // submitDataToGitHub(siteStats, 'stats');
 }
 
-// 评论和地理位置相关功能
+// 地理位置相关功能
 let userLocation = null;
-let userComments = [];
 let siteStats = {
     totalViews: 0,
     todayViews: 0,
@@ -604,179 +602,17 @@ function getRunningDays() {
 
 // 加载评论数据
 
-// 加载评论数据
-function loadComments() {
-    const stored = localStorage.getItem('robotAssistantComments');
-    if (stored) {
-        userComments = JSON.parse(stored);
-    }
-}
-
-// 保存评论数据
-function saveComments() {
-    localStorage.setItem('robotAssistantComments', JSON.stringify(userComments));
-}
 
 
 
-// 显示评论列表
-function displayComments() {
-    const commentsList = document.getElementById('commentsList');
-    const noComments = document.getElementById('noComments');
-    const commentCount = document.querySelector('.comment-count');
-    
-    if (userComments.length === 0) {
-        commentsList.innerHTML = '';
-        noComments.style.display = 'block';
-        commentCount.textContent = '(0)';
-        return;
-    }
-    
-    noComments.style.display = 'none';
-    commentCount.textContent = `(${userComments.length})`;
-    
-    // 按时间倒序排序
-    const sortedComments = [...userComments].sort((a, b) => 
-        new Date(b.timestamp) - new Date(a.timestamp)
-    );
-    
-    commentsList.innerHTML = sortedComments.map(comment => `
-        <div class="comment-item">
-            <div class="comment-header">
-                <span class="comment-author">${comment.author}</span>
-                <div>
-                    <span class="comment-location">${comment.location.region} ${comment.location.city}</span>
-                    <span class="comment-time">${formatTime(comment.timestamp)}</span>
-                </div>
-            </div>
-            <div class="comment-content">${comment.content}</div>
-        </div>
-    `).join('');
-}
 
-// 格式化时间
-function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffSecs = Math.floor(diffMs / 1000);
-    const diffMins = Math.floor(diffSecs / 60);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    
-    if (diffDays > 0) {
-        return `${diffDays}天前`;
-    } else if (diffHours > 0) {
-        return `${diffHours}小时前`;
-    } else if (diffMins > 0) {
-        return `${diffMins}分钟前`;
-    } else {
-        return '刚刚';
-    }
-}
 
-// 提交评论
-async function submitComment() {
-    console.log('submitComment 函数被调用');
-    
-    const nameInput = document.getElementById('commentName');
-    const contentInput = document.getElementById('commentContent');
-    const name = nameInput.value.trim();
-    const content = contentInput.value.trim();
-    
-    console.log('评论数据:', { name, content });
-    
-    if (!name || !content) {
-        alert('请填写昵称和评论内容');
-        return;
-    }
-    
-    // 检查脏话
-    if (containsBadWords(content)) {
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'comment-warning';
-        warningDiv.textContent = '您的评论包含不当内容，请修改后重试。';
-        contentInput.parentNode.insertBefore(warningDiv, contentInput.nextSibling);
-        
-        setTimeout(() => {
-            warningDiv.remove();
-        }, 3000);
-        return;
-    }
-    
-    // 获取用户位置
-    const location = await getUserLocation();
-    
-    // 创建新评论
-    const newComment = {
-        id: Date.now().toString(),
-        author: name,
-        content: content,
-        location: location,
-        timestamp: new Date().toISOString()
-    };
-    
-    // 添加到评论列表
-    userComments.push(newComment);
-    saveComments();
-    displayComments();
-    
-    // 尝试同步到GitHub
-    // submitDataToGitHub(userComments, 'comments');
-    
-    // 清空表单
-    nameInput.value = '';
-    contentInput.value = '';
-    
-    alert('评论发表成功！数据已保存。');
-}
 
-// 初始化评论相关事件
-function initCommentEvents() {
-    const submitBtn = document.getElementById('submitComment');
-    const nameInput = document.getElementById('commentName');
-    const contentInput = document.getElementById('commentContent');
-    
-    if (submitBtn) {
-        // 确保在所有设备上都能正确处理点击事件
-        submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            submitComment();
-        });
-        
-        // 添加触摸事件支持，以确保在移动设备上也能工作
-        submitBtn.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            submitComment();
-        });
-    }
-    
-    // 为输入框添加回车提交功能
-    if (nameInput && contentInput) {
-        nameInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                contentInput.focus();
-            }
-        });
-        
-        contentInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault();
-                submitComment();
-            }
-        });
-    }
-    
-    // 添加表单提交事件监听，确保在所有情况下都能工作
-    const commentForm = document.querySelector('.comment-form');
-    if (commentForm) {
-        commentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitComment();
-        });
-    }
-}
+
+
+
+
+
 
 
 
@@ -880,7 +716,7 @@ function addSmoothInteractions() {
     }, observerOptions);
     
     // 观察所有需要动画的元素
-    document.querySelectorAll('.result-item, .comment-item, .stat-item').forEach(item => {
+    document.querySelectorAll('.result-item, .stat-item').forEach(item => {
         observer.observe(item);
     });
     
@@ -927,7 +763,7 @@ window.addEventListener('load', function() {
     
     // 为结果区域添加延迟加载动画
     setTimeout(() => {
-        document.querySelectorAll('.result-item, .comment-item').forEach((item, index) => {
+        document.querySelectorAll('.result-item').forEach((item, index) => {
             setTimeout(() => {
                 item.style.opacity = '1';
                 item.style.transform = 'translateY(0)';
@@ -963,7 +799,7 @@ style.innerHTML = `
         }
     }
     
-    .loaded .result-item, .loaded .comment-item {
+    .loaded .result-item {
         opacity: 0;
         transform: translateY(20px);
         transition: opacity 0.5s ease, transform 0.5s ease;

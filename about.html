@@ -48,52 +48,25 @@
             color: #333;
         }
         
-        .feature-list {
+        .step-list {
             list-style-type: none;
             padding: 0;
         }
         
-        .feature-list li {
+        .step-list li {
             padding: 0.8rem 0;
             border-bottom: 1px solid #eee;
             display: flex;
             align-items: flex-start;
         }
         
-        .feature-list li:before {
-            content: "✓";
-            color: #2ecc71;
+        .step-list li:before {
+            content: attr(data-step);
+            color: #3498db;
             font-weight: bold;
             margin-right: 1rem;
             font-size: 1.2rem;
-        }
-        
-        .brand-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .brand-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .brand-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .brand-name {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
+            min-width: 30px;
         }
         
         .contact-info {
@@ -101,6 +74,23 @@
             padding: 1.5rem;
             border-radius: 8px;
             border-left: 4px solid #3498db;
+            margin-top: 2rem;
+        }
+        
+        .contact-info h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .contact-item {
+            margin-bottom: 1rem;
+        }
+        
+        .qr-code {
+            max-width: 200px;
+            margin: 1.5rem auto;
+            display: block;
         }
         
         .back-btn {
@@ -124,82 +114,42 @@
 <body>
     <header>
         <div class="container">
-            <h1>关于工业机器人查询助手</h1>
-            <p>一个专为工业机器人技术人员打造的查询工具</p>
+            <h1>工业机器人查询助手</h1>
         </div>
     </header>
     
     <main>
         <div class="about-container">
-            <div class="about-header">
-                <h1>工业机器人查询助手</h1>
-                <p>版本: 1.0.0 | 最后更新: 2025年11月</p>
-            </div>
-            
-            <div class="about-section">
-                <h2>项目介绍</h2>
-                <p>工业机器人查询助手是一个专为工业机器人技术人员、工程师和维修人员设计的在线查询工具。我们致力于提供最全面、最准确的工业机器人报警代码和系统变量查询服务，帮助技术人员快速定位和解决工业机器人运行中的各种问题。</p>
-                <p>本工具支持主流工业机器人品牌，包括FANUC、KUKA、ABB和Yaskawa等，覆盖了这些品牌的常见报警代码和重要系统变量。通过简洁直观的界面设计，用户可以快速查找所需的代码信息，提高工作效率。</p>
-            </div>
-            
-            <div class="about-section">
-                <h2>主要功能</h2>
-                <ul class="feature-list">
-                    <li>支持精确和模糊搜索两种查询方式</li>
-                    <li>提供报警代码的详细描述和解决方案</li>
-                    <li>包含系统变量的用途说明和参数信息</li>
-                    <li>支持多品牌工业机器人数据查询</li>
-                    <li>响应式设计，支持PC和移动设备访问</li>
-                    <li>评论功能，方便技术人员交流经验</li>
-                    <li>实时统计数据展示</li>
-                </ul>
-            </div>
-            
-            <div class="about-section">
-                <h2>支持品牌</h2>
-                <div class="brand-list">
-                    <div class="brand-item">
-                        <div class="brand-name">FANUC</div>
-                        <p>提供FANUC机器人报警代码和系统变量查询</p>
-                    </div>
-                    <div class="brand-item">
-                        <div class="brand-name">KUKA</div>
-                        <p>提供KUKA机器人报警代码和系统变量查询</p>
-                    </div>
-                    <div class="brand-item">
-                        <div class="brand-name">ABB</div>
-                        <p>提供ABB机器人报警代码和系统变量查询</p>
-                    </div>
-                    <div class="brand-item">
-                        <div class="brand-name">Yaskawa</div>
-                        <p>提供Yaskawa机器人报警代码和系统变量查询</p>
-                    </div>
-                </div>
-            </div>
-            
             <div class="about-section">
                 <h2>使用说明</h2>
-                <p>1. 选择要查询的品牌：在页面上方选择您要查询的机器人品牌（FANUC、KUKA、ABB或Yaskawa）。</p>
-                <p>2. 选择查询类型：选择查询报警代码或系统变量。</p>
-                <p>3. 选择搜索方式：您可以选择精确匹配或模糊匹配。</p>
-                <p>4. 输入查询关键词：在搜索框中输入报警代码或变量名称等关键词。</p>
-                <p>5. 查看结果：点击搜索按钮，系统将显示匹配的查询结果。</p>
-                <p>6. 交流讨论：您可以在评论区分享经验、提出问题或回答其他用户的问题。</p>
+                <ul class="step-list">
+                    <li data-step="1.">选择要查询的品牌：在页面上方选择您要查询的机器人品牌（FANUC、KUKA、ABB或Yaskawa）。</li>
+                    <li data-step="2.">选择查询类型：选择查询报警代码或系统变量。</li>
+                    <li data-step="3.">选择搜索方式：您可以选择精确匹配或模糊匹配。</li>
+                    <li data-step="4.">输入查询关键词：在搜索框中输入报警代码或变量名称等关键词。</li>
+                    <li data-step="5.">查看结果：点击搜索按钮，系统将显示匹配的查询结果。</li>
+                    <li data-step="6.">交流讨论：您可以在评论区分享经验、提出问题或回答其他用户的问题。</li>
+                </ul>
             </div>
             
             <div class="about-section">
                 <h2>免责声明</h2>
                 <p>本工具提供的所有信息仅供参考，实际应用中请以机器人具体型号和官方文档为准。对于因使用本工具信息造成的任何损失，我们不承担任何责任。</p>
-                <p>如果您在使用过程中发现任何错误或有改进建议，欢迎通过评论区或联系我们进行反馈。</p>
+                <p>如果您在使用过程中发现任何错误或有改进建议，欢迎通过扫描下方抖音二维码或邮箱进行反馈。</p>
             </div>
             
-            <div class="about-section">
-                <h2>联系我们</h2>
-                <div class="contact-info">
+            <div class="contact-info">
+                <h3>联系我</h3>
+                <div class="contact-item">
                     <p><strong>开发者：</strong>Life</p>
-                    <p><strong>项目地址：</strong><a href="https://github.com/shanhaixiansheng/robot">https://github.com/shanhaixiansheng/robot</a></p>
-                    <p><strong>反馈方式：</strong>通过网站评论区或GitHub Issues提交问题或建议</p>
                 </div>
+                <div class="contact-item">
+                    <p><strong>邮箱：</strong>2286587785@QQ.COM</p>
+                </div>
+                <div class="contact-item">
+                    <p><strong>反馈方式：</strong>通过邮箱或GitHub Issues提交问题或建议</p>
+                </div>
+                <img src="抖音码.jpg" alt="抖音二维码" class="qr-code">
             </div>
             
             <div style="text-align: center;">
